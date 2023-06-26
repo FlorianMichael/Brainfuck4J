@@ -1,0 +1,15 @@
+plugins {
+    id "java"
+}
+
+archivesBaseName = "Brainfuck4J"
+version = "1.0.0"
+group = "de.florianmichael"
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    from("LICENSE") { rename { "${it}_${project.archivesBaseName}" } }
+}
