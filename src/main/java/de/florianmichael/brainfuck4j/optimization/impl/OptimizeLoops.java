@@ -19,12 +19,18 @@ package de.florianmichael.brainfuck4j.optimization.impl;
 
 import de.florianmichael.brainfuck4j.exception.BFRuntimeException;
 import de.florianmichael.brainfuck4j.optimization.AOptimization;
+import de.florianmichael.brainfuck4j.util.Logger;
 
-import static de.florianmichael.brainfuck4j.BFConstants.*;
+import static de.florianmichael.brainfuck4j.BFConstants.if_condition_and_jump_back;
+import static de.florianmichael.brainfuck4j.BFConstants.start_while_loop;
 
 public class OptimizeLoops extends AOptimization {
 
     public short[] loopPoints;
+
+    public OptimizeLoops(Logger logger) {
+        super(logger);
+    }
 
     @Override
     public String fix(String input) {
@@ -43,21 +49,24 @@ public class OptimizeLoops extends AOptimization {
         }
 
         if (in != 0) {
-            throw new BFRuntimeException(BFRuntimeException.Type.INVALID_LOOK_SYNTAX);
+            this.logger.error(new BFRuntimeException(BFRuntimeException.Type.INVALID_LOOK_SYNTAX));
         }
 
         for (start = 0; start < end; start++) {
             if (brainfuckCode[start] == start_while_loop) {
                 in = 0;
-                for (short p = (short) (start + 1); p <= end; p++) {
-                    if (brainfuckCode[p] == if_condition_and_jump_back) {
-                        if (in > 0) in--;
-                        else {
-                            loopPoints[start] = p;
-                            loopPoints[p] = start;
+                for (short i = (short) (start + 1); i <= end; i++) {
+                    if (brainfuckCode[i] == if_condition_and_jump_back) {
+                        if (in <= 0) {
+                            loopPoints[start] = i;
+                            loopPoints[i] = start;
                             break;
+                        } else {
+                            in--;
                         }
-                    } else if (brainfuckCode[p] == start_while_loop) in++;
+                    } else if (brainfuckCode[i] == start_while_loop) {
+                        in++;
+                    }
                 }
             }
         }

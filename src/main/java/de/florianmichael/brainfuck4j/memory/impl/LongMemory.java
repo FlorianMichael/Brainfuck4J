@@ -19,13 +19,14 @@ package de.florianmichael.brainfuck4j.memory.impl;
 
 import de.florianmichael.brainfuck4j.exception.BFRuntimeException;
 import de.florianmichael.brainfuck4j.memory.AMemory;
+import de.florianmichael.brainfuck4j.util.Logger;
 
 public class LongMemory extends AMemory {
 
     private final long[] memory;
 
-    public LongMemory(final int size) {
-        super("Long", size);
+    public LongMemory(final int size, final Logger logger) {
+        super("Long", size, logger);
 
         this.memory = new long[size];
     }
@@ -35,7 +36,7 @@ public class LongMemory extends AMemory {
         if (currentPointer < size - 1) {
             currentPointer += value;
         } else {
-            throw new BFRuntimeException(BFRuntimeException.Type.MEMORY_OVERFLOW);
+            this.logger.error(new BFRuntimeException(BFRuntimeException.Type.MEMORY_OVERFLOW));
         }
     }
 
@@ -44,7 +45,7 @@ public class LongMemory extends AMemory {
         if (currentPointer != 0) {
             currentPointer -= value;
         } else {
-            throw new BFRuntimeException(BFRuntimeException.Type.MEMORY_UNDERFLOW);
+            this.logger.error(new BFRuntimeException(BFRuntimeException.Type.MEMORY_UNDERFLOW));
         }
     }
 
@@ -71,10 +72,5 @@ public class LongMemory extends AMemory {
     @Override
     public char get() {
         return (char) memory[currentPointer];
-    }
-
-    @Override
-    public AMemory next(int size) {
-        return new LongMemory(size);
     }
 }

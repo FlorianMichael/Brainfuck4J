@@ -15,17 +15,23 @@
  * limitations under the License.
  */
 
-package de.florianmichael.brainfuck4j.optimization;
+package de.florianmichael.brainfuck4j.util;
 
-import de.florianmichael.brainfuck4j.util.Logger;
+public interface Logger {
 
-public abstract class AOptimization {
+    void info(final String message);
+    void error(final Throwable t);
 
-    public final Logger logger;
+    class LoggerImpl implements Logger {
 
-    public AOptimization(Logger logger) {
-        this.logger = logger;
+        @Override
+        public void info(String message) {
+            System.out.println(message);
+        }
+
+        @Override
+        public void error(Throwable t) {
+            t.printStackTrace();
+        }
     }
-
-    public abstract String fix(final String input);
 }

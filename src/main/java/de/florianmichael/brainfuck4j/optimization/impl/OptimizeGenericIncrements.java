@@ -19,6 +19,7 @@ package de.florianmichael.brainfuck4j.optimization.impl;
 
 import de.florianmichael.brainfuck4j.BFConstants;
 import de.florianmichael.brainfuck4j.optimization.AOptimization;
+import de.florianmichael.brainfuck4j.util.Logger;
 
 import static de.florianmichael.brainfuck4j.BFConstants.*;
 
@@ -31,43 +32,44 @@ public class OptimizeGenericIncrements extends AOptimization {
             { decrease_value, decrease_value_optimized }
     };
 
+    public OptimizeGenericIncrements(Logger logger) {
+        super(logger);
+    }
+
     @Override
     public String fix(String input) {
         input = BFConstants.replaceGenericIncrements(input);
         final StringBuilder output = new StringBuilder(input);
 
-        char bfCommand, optimizedCommand;
-
         for (int i = 0; i < output.length(); i++) {
-            int pos, counter, c;
-            char ch = output.charAt(i);
+            final char ch = output.charAt(i);
 
+            int position;
+            int counter;
+            int c;
+
+            // Check if the instruction and be optimized
             for (c = 0; c < normalToOptimized.length; c++) {
                 if (ch == normalToOptimized[c][0]) break;
             }
-            if (c == normalToOptimized.length)
-                continue;
 
-            bfCommand = normalToOptimized[c][0];
-            optimizedCommand = normalToOptimized[c][1];
+            // If not, continue
+            if (c == normalToOptimized.length) continue;
 
-            pos = i + 1;
+            char normalCommand = normalToOptimized[c][0];
+            char optimizedCommand = normalToOptimized[c][1];
+
+            position = i + 1;
             counter = 1;
 
-            while (pos < output.length() && output.charAt(pos) == bfCommand) {
+            while (position < output.length() && output.charAt(position) == normalCommand) {
                 counter++;
-                pos++;
+                position++;
             }
 
             if (counter > 1) {
-                if (counter > 40) {
-                    output.delete(i, i + 40);
-                    counter = 40;
-                } else
-                    output.delete(i, pos);
-
-
-                output.insert(i, String.valueOf(optimizedCommand) + (char) (counter + '0'));
+                output.delete(i, position);
+                output.insert(i, String.valueOf(optimizedCommand) + (char) (counter + optimized_count_indicator));
                 i++;
             }
         }

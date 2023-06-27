@@ -22,6 +22,7 @@ import de.florianmichael.brainfuck4j.memory.AMemory;
 import de.florianmichael.brainfuck4j.optimization.impl.OptimizeGenericIncrements;
 import de.florianmichael.brainfuck4j.optimization.impl.OptimizeLoops;
 import de.florianmichael.brainfuck4j.optimization.impl.StripNonBrainfuckCharacters;
+import de.florianmichael.brainfuck4j.util.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,23 +30,25 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 public class Brainfuck4J extends BFConstants {
-    private final StripNonBrainfuckCharacters step1 = new StripNonBrainfuckCharacters();
-    private final OptimizeGenericIncrements step2 = new OptimizeGenericIncrements();
-    private final OptimizeLoops step3 = new OptimizeLoops();
+    private final StripNonBrainfuckCharacters step1;
+    private final OptimizeGenericIncrements step2;
+    private final OptimizeLoops step3;
 
     private final ExecutionTracker instructionTracker = new ExecutionTracker();
 
-    private final InputStreamReader input;
-    private final PrintStream output;
-    private final AMemory memory;
+    private final Logger logger;
+    private final Runnable finished;
 
     private long time;
     private boolean cancelled;
 
-    public Brainfuck4J(final InputStream input, final PrintStream output, final AMemory memory) {
-        this.input = new InputStreamReader(input);
-        this.output = output;
-        this.memory = memory;
+    public Brainfuck4J(final Logger logger, final Runnable finished) {
+        this.logger = logger;
+        this.finished = finished;
+
+        this.step1 = new StripNonBrainfuckCharacters(logger);
+        this.step2 = new OptimizeGenericIncrements(logger);
+        this.step3 = new OptimizeLoops(logger);
     }
 
     public void close() {
@@ -53,56 +56,71 @@ public class Brainfuck4J extends BFConstants {
 
         time = System.currentTimeMillis() - end;
         cancelled = true;
+
+        this.finished.run();
     }
 
-    public void run(String input) throws IOException {
-        // Apply all optimizations to the code
-        System.out.println("Applying step1 (StripNonBrainfuckCharacters) to raw code!");
+    /**
+     * Apply all optimizations on the current brainfuck code, this method can be overwritten to provide/apply more steps
+     */
+    public String applySteps(String input) {
+        this.logger.info("Applying step1 (StripNonBrainfuckCharacters) to raw code!");
         input = step1.fix(input);
-        System.out.println("Applying step2 (OptimizeGenericIncrements) to raw code!");
+
+        this.logger.info("Applying step2 (OptimizeGenericIncrements) to raw code!");
         input = step2.fix(input);
-        System.out.println("Applying step3 (OptimizeLoops) to raw code!");
+
+        this.logger.info("Applying step3 (OptimizeLoops) to raw code!");
         input = step3.fix(input);
+
+        return input;
+    }
+
+    public void run(final InputStream input, final PrintStream output, final AMemory memory, String code) throws IOException {
+        final InputStreamReader inputStreamReader = new InputStreamReader(input);
+        code = applySteps(code);
 
         time = System.currentTimeMillis();
 
-        final char[] brainfuckCode = input.toCharArray();
-        System.out.println("Executing code with " + brainfuckCode.length + " operations!: " + input);
-        for (int pc = 0; pc < brainfuckCode.length; pc++) {
-            char currentCommand = brainfuckCode[pc];
+        final char[] brainfuckCode = code.toCharArray();
+        this.logger.info("Executing code with " + brainfuckCode.length + " operations!: " + code);
+        for (int currentOperation = 0; currentOperation < brainfuckCode.length; currentOperation++) {
+            final char currentCommand = brainfuckCode[currentOperation];
 
             if (cancelled) break;
-
             if (currentCommand == increase_value) {
                 memory.increase_value((byte) 1);
             } else if (currentCommand == increase_value_optimized) {
-                memory.increase_value((byte) (brainfuckCode[++pc] - '0'));
+                memory.increase_value((byte) (brainfuckCode[++currentOperation] - optimized_count_indicator));
             } else if (currentCommand == decrease_value) {
                 memory.decrease_value((byte) 1);
             } else if (currentCommand == decrease_value_optimized) {
-                memory.decrease_value((byte) (brainfuckCode[++pc] - '0'));
+                memory.decrease_value((byte) (brainfuckCode[++currentOperation] - optimized_count_indicator));
             } else if (currentCommand == increase_memory_pointer) {
                 memory.increase_memory_pointer(1);
             } else if (currentCommand == increase_memory_optimized) {
-                memory.increase_memory_pointer(brainfuckCode[++pc] - '0');
+                memory.increase_memory_pointer(brainfuckCode[++currentOperation] - optimized_count_indicator);
             } else if (currentCommand == decrease_memory_pointer) {
                 memory.decrease_memory_pointer(1);
             } else if (currentCommand == decrease_memory_optimized) {
-                memory.decrease_memory_pointer(brainfuckCode[++pc] - '0');
+                memory.decrease_memory_pointer(brainfuckCode[++currentOperation] - optimized_count_indicator);
             } else if (currentCommand == start_while_loop) {
-                if (memory.isNull()) pc = step3.loopPoints[pc];
+                if (memory.isNull()) currentOperation = step3.loopPoints[currentOperation];
             } else if (currentCommand == if_condition_and_jump_back) {
-                if (!memory.isNull()) pc = step3.loopPoints[pc];
+                if (!memory.isNull()) currentOperation = step3.loopPoints[currentOperation];
             } else if (currentCommand == get_char) {
                 output.print(memory.get());
             } else if (currentCommand == put_char) {
-                memory.set((char) this.input.read());
+                memory.set((char) inputStreamReader.read());
             } else if (currentCommand == zero_memory_cell) {
                 memory.set((char) 0);
             }
             instructionTracker.count();
         }
         close();
+
+        this.logger.info("Executed code with: " + instructionTracker.get() + " instructions!");
+        this.logger.info("Time: " + time + " (ms)");
     }
 
     public long getTime() {

@@ -34,6 +34,7 @@ public class BFConstants {
     /**
      * These constants are internally used for optimizations
      */
+    public final static char optimized_count_indicator = '0';
 
     public final static char increase_memory_optimized = 'a';
     public final static char decrease_memory_optimized = 'b';
