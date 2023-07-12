@@ -19,7 +19,6 @@ package de.florianmichael.brainfuck4j.optimization.impl;
 
 import de.florianmichael.brainfuck4j.exception.BFRuntimeException;
 import de.florianmichael.brainfuck4j.optimization.AOptimization;
-import de.florianmichael.brainfuck4j.util.Logger;
 
 import static de.florianmichael.brainfuck4j.BFConstants.if_condition_and_jump_back;
 import static de.florianmichael.brainfuck4j.BFConstants.start_while_loop;
@@ -27,10 +26,6 @@ import static de.florianmichael.brainfuck4j.BFConstants.start_while_loop;
 public class OptimizeLoops extends AOptimization {
 
     public short[] loopPoints;
-
-    public OptimizeLoops(Logger logger) {
-        super(logger);
-    }
 
     @Override
     public String fix(String input) {
@@ -49,7 +44,7 @@ public class OptimizeLoops extends AOptimization {
         }
 
         if (in != 0) {
-            this.logger.error(new BFRuntimeException(BFRuntimeException.Type.INVALID_LOOK_SYNTAX));
+            throw new BFRuntimeException(BFRuntimeException.Type.INVALID_LOOK_SYNTAX);
         }
 
         for (start = 0; start < end; start++) {

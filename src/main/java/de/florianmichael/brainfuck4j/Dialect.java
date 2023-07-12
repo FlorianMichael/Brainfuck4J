@@ -23,11 +23,33 @@ import java.util.Map;
 /**
  * This class represents all operations which exist in the Brainfuck specification
  */
-public record Dialect(String name, String increase_memory_pointer, String decrease_memory_pointer, String increase_value, String decrease_value, String start_while_loop, String if_condition_and_jump_back, String get_char, String put_char) {
+public class Dialect {
 
     public static Dialect BRAINFUCK = new Dialect("Brainfuck", ">", "<", "+", "-", "[", "]", ",", ".");
     public static Dialect TROLLSCRIPT = new Dialect("Trollscript", "ooo", "ool", "olo", "oll", "loo", "lol", "llo", "lll");
     public static Dialect OOK = new Dialect("Ook!", "Ook. Ook?", "Ook? Ook.", "Ook. Ook.", "Ook! Ook!", "Ook! Ook.", "Ook. Ook!", "Ook! Ook?", "Ook? Ook!");
+
+    public final String name;
+    public final String increase_memory_pointer;
+    public final String decrease_memory_pointer;
+    public final String increase_value;
+    public final String decrease_value;
+    public final String start_while_loop;
+    public final String if_condition_and_jump_back;
+    public final String get_char;
+    public final String put_char;
+
+    public Dialect(String name, String increase_memory_pointer, String decrease_memory_pointer, String increase_value, String decrease_value, String start_while_loop, String if_condition_and_jump_back, String get_char, String put_char) {
+        this.name = name;
+        this.increase_memory_pointer = increase_memory_pointer;
+        this.decrease_memory_pointer = decrease_memory_pointer;
+        this.increase_value = increase_value;
+        this.decrease_value = decrease_value;
+        this.start_while_loop = start_while_loop;
+        this.if_condition_and_jump_back = if_condition_and_jump_back;
+        this.get_char = get_char;
+        this.put_char = put_char;
+    }
 
     /**
      * Converts Brainfuck code from one Dialect to another

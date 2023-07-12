@@ -18,15 +18,10 @@
 package de.florianmichael.brainfuck4j.optimization.impl;
 
 import de.florianmichael.brainfuck4j.optimization.AOptimization;
-import de.florianmichael.brainfuck4j.util.Logger;
 
 import static de.florianmichael.brainfuck4j.BFConstants.*;
 
 public class StripNonBrainfuckCharacters extends AOptimization {
-
-    public StripNonBrainfuckCharacters(Logger logger) {
-        super(logger);
-    }
 
     @Override
     public String fix(String input) {

@@ -25,8 +25,8 @@ public class ByteMemory extends AMemory {
 
     private final byte[] memory;
 
-    public ByteMemory(final int size, final Logger logger) {
-        super("Byte", size, logger);
+    public ByteMemory(final int size) {
+        super("Byte", size);
 
         this.memory = new byte[size];
     }
@@ -36,7 +36,7 @@ public class ByteMemory extends AMemory {
         if (currentPointer < size - 1) {
             currentPointer += value;
         } else {
-            this.logger.error(new BFRuntimeException(BFRuntimeException.Type.MEMORY_OVERFLOW));
+            throw new BFRuntimeException(BFRuntimeException.Type.MEMORY_OVERFLOW);
         }
     }
 
@@ -45,7 +45,7 @@ public class ByteMemory extends AMemory {
         if (currentPointer != 0) {
             currentPointer -= value;
         } else {
-            this.logger.error(new BFRuntimeException(BFRuntimeException.Type.MEMORY_UNDERFLOW));
+            throw new BFRuntimeException(BFRuntimeException.Type.MEMORY_UNDERFLOW);
         }
     }
 

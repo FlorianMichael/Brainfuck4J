@@ -17,11 +17,9 @@
 
 package de.florianmichael.brainfuck4j;
 
+import de.florianmichael.brainfuck4j.optimization.StepTracker;
 import de.florianmichael.brainfuck4j.util.ExecutionTracker;
 import de.florianmichael.brainfuck4j.memory.AMemory;
-import de.florianmichael.brainfuck4j.optimization.impl.OptimizeGenericIncrements;
-import de.florianmichael.brainfuck4j.optimization.impl.OptimizeLoops;
-import de.florianmichael.brainfuck4j.optimization.impl.StripNonBrainfuckCharacters;
 import de.florianmichael.brainfuck4j.util.Logger;
 
 import java.io.IOException;
@@ -30,10 +28,6 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 public class Brainfuck4J extends BFConstants {
-    private final StripNonBrainfuckCharacters step1;
-    private final OptimizeGenericIncrements step2;
-    private final OptimizeLoops step3;
-
     private final ExecutionTracker instructionTracker = new ExecutionTracker();
 
     private final Logger logger;
@@ -42,13 +36,13 @@ public class Brainfuck4J extends BFConstants {
     private long time;
     private boolean cancelled;
 
+    public Brainfuck4J(final Runnable finished) {
+        this(new Logger.LoggerImpl(), finished);
+    }
+
     public Brainfuck4J(final Logger logger, final Runnable finished) {
         this.logger = logger;
         this.finished = finished;
-
-        this.step1 = new StripNonBrainfuckCharacters(logger);
-        this.step2 = new OptimizeGenericIncrements(logger);
-        this.step3 = new OptimizeLoops(logger);
     }
 
     public void close() {
@@ -60,25 +54,14 @@ public class Brainfuck4J extends BFConstants {
         this.finished.run();
     }
 
-    /**
-     * Apply all optimizations on the current brainfuck code, this method can be overwritten to provide/apply more steps
-     */
-    public String applySteps(String input) {
-        this.logger.info("Applying step1 (StripNonBrainfuckCharacters) to raw code!");
-        input = step1.fix(input);
-
-        this.logger.info("Applying step2 (OptimizeGenericIncrements) to raw code!");
-        input = step2.fix(input);
-
-        this.logger.info("Applying step3 (OptimizeLoops) to raw code!");
-        input = step3.fix(input);
-
-        return input;
-    }
-
-    public void run(final InputStream input, final PrintStream output, final AMemory memory, String code) throws IOException {
+    public void run(final InputStream input, final PrintStream output, final AMemory memory, String code) {
         final InputStreamReader inputStreamReader = new InputStreamReader(input);
-        code = applySteps(code);
+        try {
+            code = StepTracker.fix(this.logger, code);
+        } catch (Exception e) {
+            this.logger.error(e);
+            return;
+        }
 
         time = System.currentTimeMillis();
 
@@ -97,21 +80,41 @@ public class Brainfuck4J extends BFConstants {
             } else if (currentCommand == decrease_value_optimized) {
                 memory.decrease_value((byte) (brainfuckCode[++currentOperation] - optimized_count_indicator));
             } else if (currentCommand == increase_memory_pointer) {
-                memory.increase_memory_pointer(1);
+                try {
+                    memory.increase_memory_pointer(1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } else if (currentCommand == increase_memory_optimized) {
-                memory.increase_memory_pointer(brainfuckCode[++currentOperation] - optimized_count_indicator);
+                try {
+                    memory.increase_memory_pointer(brainfuckCode[++currentOperation] - optimized_count_indicator);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } else if (currentCommand == decrease_memory_pointer) {
-                memory.decrease_memory_pointer(1);
+                try {
+                    memory.decrease_memory_pointer(1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } else if (currentCommand == decrease_memory_optimized) {
-                memory.decrease_memory_pointer(brainfuckCode[++currentOperation] - optimized_count_indicator);
+                try {
+                    memory.decrease_memory_pointer(brainfuckCode[++currentOperation] - optimized_count_indicator);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } else if (currentCommand == start_while_loop) {
-                if (memory.isNull()) currentOperation = step3.loopPoints[currentOperation];
+                if (memory.isNull()) currentOperation = StepTracker.OptimizeLoops.loopPoints[currentOperation];
             } else if (currentCommand == if_condition_and_jump_back) {
-                if (!memory.isNull()) currentOperation = step3.loopPoints[currentOperation];
+                if (!memory.isNull()) currentOperation = StepTracker.OptimizeLoops.loopPoints[currentOperation];
             } else if (currentCommand == get_char) {
                 output.print(memory.get());
             } else if (currentCommand == put_char) {
-                memory.set((char) inputStreamReader.read());
+                try {
+                    memory.set((char) inputStreamReader.read());
+                } catch (IOException e) {
+                    this.logger.error(e);
+                }
             } else if (currentCommand == zero_memory_cell) {
                 memory.set((char) 0);
             }

@@ -17,23 +17,19 @@
 
 package de.florianmichael.brainfuck4j.memory;
 
-import de.florianmichael.brainfuck4j.util.Logger;
-
 public abstract class AMemory {
     public final String name;
     public final int size;
-    public final Logger logger;
 
     public int currentPointer;
 
-    public AMemory(String name, int size, Logger logger) {
+    public AMemory(String name, int size) {
         this.name = name;
         this.size = size;
-        this.logger = logger;
     }
 
-    public abstract void increase_memory_pointer(final int value);
-    public abstract void decrease_memory_pointer(final int value);
+    public abstract void increase_memory_pointer(final int value) throws Exception;
+    public abstract void decrease_memory_pointer(final int value) throws Exception;
 
     public abstract void increase_value(final byte value);
     public abstract void decrease_value(final byte value);

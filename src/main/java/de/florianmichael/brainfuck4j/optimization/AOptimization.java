@@ -17,15 +17,7 @@
 
 package de.florianmichael.brainfuck4j.optimization;
 
-import de.florianmichael.brainfuck4j.util.Logger;
-
 public abstract class AOptimization {
 
-    public final Logger logger;
-
-    public AOptimization(Logger logger) {
-        this.logger = logger;
-    }
-
-    public abstract String fix(final String input);
+    public abstract String fix(final String input) throws Exception;
 }

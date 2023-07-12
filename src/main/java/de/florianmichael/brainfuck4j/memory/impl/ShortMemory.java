@@ -25,8 +25,8 @@ public class ShortMemory extends AMemory {
 
     private final short[] memory;
 
-    public ShortMemory(final int size, final Logger logger) {
-        super("Short", size, logger);
+    public ShortMemory(final int size) {
+        super("Short", size);
 
         this.memory = new short[size];
     }
@@ -36,7 +36,7 @@ public class ShortMemory extends AMemory {
         if (currentPointer < size - 1) {
             currentPointer += value;
         } else {
-            this.logger.error(new BFRuntimeException(BFRuntimeException.Type.MEMORY_OVERFLOW));
+            throw new BFRuntimeException(BFRuntimeException.Type.MEMORY_OVERFLOW);
         }
     }
 
@@ -45,7 +45,7 @@ public class ShortMemory extends AMemory {
         if (currentPointer != 0) {
             currentPointer -= value;
         } else {
-            this.logger.error(new BFRuntimeException(BFRuntimeException.Type.MEMORY_UNDERFLOW));
+            throw new BFRuntimeException(BFRuntimeException.Type.MEMORY_UNDERFLOW);
         }
     }
 

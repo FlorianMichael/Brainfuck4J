@@ -19,7 +19,6 @@ package de.florianmichael.brainfuck4j.optimization.impl;
 
 import de.florianmichael.brainfuck4j.BFConstants;
 import de.florianmichael.brainfuck4j.optimization.AOptimization;
-import de.florianmichael.brainfuck4j.util.Logger;
 
 import static de.florianmichael.brainfuck4j.BFConstants.*;
 
@@ -32,10 +31,6 @@ public class OptimizeGenericIncrements extends AOptimization {
             { decrease_value, decrease_value_optimized }
     };
 
-    public OptimizeGenericIncrements(Logger logger) {
-        super(logger);
-    }
-
     @Override
     public String fix(String input) {
         input = BFConstants.replaceGenericIncrements(input);
@@ -44,11 +39,11 @@ public class OptimizeGenericIncrements extends AOptimization {
         for (int i = 0; i < output.length(); i++) {
             final char ch = output.charAt(i);
 
-            int position;
-            int counter;
-            int c;
+            int position = i + 1;
+            int counter = 1;
 
             // Check if the instruction and be optimized
+            int c;
             for (c = 0; c < normalToOptimized.length; c++) {
                 if (ch == normalToOptimized[c][0]) break;
             }
@@ -58,9 +53,6 @@ public class OptimizeGenericIncrements extends AOptimization {
 
             char normalCommand = normalToOptimized[c][0];
             char optimizedCommand = normalToOptimized[c][1];
-
-            position = i + 1;
-            counter = 1;
 
             while (position < output.length() && output.charAt(position) == normalCommand) {
                 counter++;

@@ -25,8 +25,8 @@ public class IntegerMemory extends AMemory {
 
     private final int[] memory;
 
-    public IntegerMemory(final int size, final Logger logger) {
-        super("Integer", size, logger);
+    public IntegerMemory(final int size) {
+        super("Integer", size);
 
         this.memory = new int[size];
     }
@@ -36,7 +36,7 @@ public class IntegerMemory extends AMemory {
         if (currentPointer < size - 1) {
             currentPointer += value;
         } else {
-            this.logger.error(new BFRuntimeException(BFRuntimeException.Type.MEMORY_OVERFLOW));
+            throw new BFRuntimeException(BFRuntimeException.Type.MEMORY_OVERFLOW);
         }
     }
 
@@ -45,7 +45,7 @@ public class IntegerMemory extends AMemory {
         if (currentPointer != 0) {
             currentPointer -= value;
         } else {
-            this.logger.error(new BFRuntimeException(BFRuntimeException.Type.MEMORY_UNDERFLOW));
+            throw new BFRuntimeException(BFRuntimeException.Type.MEMORY_UNDERFLOW);
         }
     }
 
