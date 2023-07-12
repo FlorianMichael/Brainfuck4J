@@ -59,7 +59,7 @@ public class Dialect {
      * @return The transformed code
      */
     public static String convert(String input, final Dialect from, final Dialect to) {
-        final var diff = new HashMap<String, String>();
+        final Map<String, String> diff = new HashMap<String, String>();
 
         diff.put(from.increase_memory_pointer, to.increase_memory_pointer);
         diff.put(from.decrease_memory_pointer, from.decrease_memory_pointer);
