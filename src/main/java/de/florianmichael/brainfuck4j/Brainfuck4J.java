@@ -33,7 +33,6 @@ public class Brainfuck4J extends BFConstants {
     private final Logger logger;
     private final Runnable finished;
 
-    private long time;
     private boolean cancelled;
 
     public Brainfuck4J(final Runnable finished) {
@@ -46,9 +45,7 @@ public class Brainfuck4J extends BFConstants {
     }
 
     public void close() {
-        final long end = time;
-
-        time = System.currentTimeMillis() - end;
+        instructionTracker.close();
         cancelled = true;
 
         this.finished.run();
@@ -63,7 +60,7 @@ public class Brainfuck4J extends BFConstants {
             return;
         }
 
-        time = System.currentTimeMillis();
+        instructionTracker.init();
 
         final char[] brainfuckCode = code.toCharArray();
         this.logger.info("Executing code with " + brainfuckCode.length + " operations!: " + code);
@@ -122,12 +119,8 @@ public class Brainfuck4J extends BFConstants {
         }
         close();
 
-        this.logger.info("Executed code with: " + instructionTracker.get() + " instructions!");
-        this.logger.info("Time: " + time + " (ms)");
-    }
-
-    public long getTime() {
-        return time;
+        this.logger.info("Executed code with: " + instructionTracker.getInstructions() + " instructions!");
+        this.logger.info("Time: " + instructionTracker.getTime() + " (ms)");
     }
 
     public ExecutionTracker getInstructionTracker() {

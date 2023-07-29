@@ -19,12 +19,33 @@ package de.florianmichael.brainfuck4j.util;
 
 public class ExecutionTracker {
     private long instructions;
+    private long time;
+
+    private boolean locked;
+
+    public void init() {
+        locked = true;
+        time = System.currentTimeMillis();
+    }
 
     public void count() {
         this.instructions++;
     }
 
-    public long get() {
+    public void close() {
+        final long end = time;
+
+        time = System.currentTimeMillis() - end;
+        locked = false;
+    }
+
+    public long getInstructions() {
         return this.instructions;
+    }
+
+    public long getTime() {
+        if (locked) return -1; // Calculating state
+
+        return time;
     }
 }
