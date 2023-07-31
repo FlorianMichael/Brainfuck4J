@@ -37,7 +37,7 @@ public abstract class AMemory {
 
     public void execute(final InputStreamReader in, final PrintStream out, final List<Instruction> instructions, final short[] loopPoints) throws Throwable {
         for (int i = 0; i < instructions.size(); i++) {
-            final var instruction = instructions.get(i);
+            final Instruction instruction = instructions.get(i);
 
             if (instruction.type == InstructionTypes.INCREASE_MEMORY_POINTER) {
                 if (currentPointer < size - 1) {

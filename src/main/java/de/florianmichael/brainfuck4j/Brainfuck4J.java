@@ -47,7 +47,7 @@ public class Brainfuck4J {
     }
 
     private List<Instruction> batch(final List<InstructionTypes> instructionTypes) {
-        final var instructions = new ArrayList<Instruction>();
+        final List<Instruction> instructions = new ArrayList<Instruction>();
         InstructionTypes last = null;
         for (InstructionTypes type : instructionTypes) {
             if (instructions.isEmpty() || type == InstructionTypes.START_LOOP || type == InstructionTypes.END_LOOP || type == InstructionTypes.GET_CHAR || type == InstructionTypes.PUT_CHAR) {
@@ -66,11 +66,11 @@ public class Brainfuck4J {
     }
 
     private List<InstructionTypes> clearLoops(final List<InstructionTypes> instructions) {
-        final var newInstructions = new ArrayList<InstructionTypes>();
+        final List<InstructionTypes> newInstructions = new ArrayList<InstructionTypes>();
         for (int i = 0; i < instructions.size(); i++) {
-            final var old = instructions.get(i);
+            final InstructionTypes old = instructions.get(i);
             if (instructions.size() - 1 > i + 2) {
-                final var operator = instructions.get(i + 1);
+                final InstructionTypes operator = instructions.get(i + 1);
                 if (old == InstructionTypes.START_LOOP && (operator == InstructionTypes.INCREASE_VALUE || operator == InstructionTypes.DECREASE_VALUE) && instructions.get(i + 2) == InstructionTypes.END_LOOP) {
                     newInstructions.add(InstructionTypes.CLEAR_LOOP);
                     i += 2;
@@ -124,22 +124,22 @@ public class Brainfuck4J {
     public void run(final InputStream in, final PrintStream out, final AMemory memory, String input) {
         try {
             long time = System.currentTimeMillis();
-            final var instructionTypes = new ArrayList<InstructionTypes>();
+            final List<InstructionTypes> instructionTypes = new ArrayList<InstructionTypes>();
 
-            final var code = input.toCharArray();
+            final char[] code = input.toCharArray();
             for (char c : code) {
-                final var type = InstructionTypes.fromLeadingCharacter(c);
+                final InstructionTypes type = InstructionTypes.fromLeadingCharacter(c);
                 if (type == null) {
                     continue;
                 }
                 instructionTypes.add(type);
             }
 
-            final var instructions = batch(clearLoops(instructionTypes));
+            final List<Instruction> instructions = batch(clearLoops(instructionTypes));
             calculateLoopPoints(instructions);
 
-            final var inIO = new InputStreamReader(in);
-            final var outIO = new PrintStream(out);
+            final InputStreamReader inIO = new InputStreamReader(in);
+            final PrintStream outIO = new PrintStream(out);
 
             memory.execute(inIO, outIO, instructions, loopPoints);
             close();
