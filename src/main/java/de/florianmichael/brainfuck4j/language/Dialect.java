@@ -34,19 +34,19 @@ public class Dialect {
     public final String decrease_memory_pointer;
     public final String increase_value;
     public final String decrease_value;
-    public final String start_while_loop;
-    public final String if_condition_and_jump_back;
+    public final String start_loop;
+    public final String end_loop;
     public final String get_char;
     public final String put_char;
 
-    public Dialect(String name, String increase_memory_pointer, String decrease_memory_pointer, String increase_value, String decrease_value, String start_while_loop, String if_condition_and_jump_back, String get_char, String put_char) {
+    public Dialect(String name, String increase_memory_pointer, String decrease_memory_pointer, String increase_value, String decrease_value, String start_loop, String end_loop, String get_char, String put_char) {
         this.name = name;
         this.increase_memory_pointer = increase_memory_pointer;
         this.decrease_memory_pointer = decrease_memory_pointer;
         this.increase_value = increase_value;
         this.decrease_value = decrease_value;
-        this.start_while_loop = start_while_loop;
-        this.if_condition_and_jump_back = if_condition_and_jump_back;
+        this.start_loop = start_loop;
+        this.end_loop = end_loop;
         this.get_char = get_char;
         this.put_char = put_char;
     }
@@ -65,8 +65,8 @@ public class Dialect {
         diff.put(from.decrease_memory_pointer, from.decrease_memory_pointer);
         diff.put(from.increase_value, to.increase_value);
         diff.put(from.decrease_value, from.decrease_value);
-        diff.put(from.start_while_loop, to.start_while_loop);
-        diff.put(from.if_condition_and_jump_back, from.if_condition_and_jump_back);
+        diff.put(from.start_loop, to.start_loop);
+        diff.put(from.end_loop, from.end_loop);
         diff.put(from.get_char, to.get_char);
         diff.put(from.put_char, from.put_char);
 
@@ -95,8 +95,8 @@ public class Dialect {
                 ", decrease_memory_pointer='" + decrease_memory_pointer + '\'' +
                 ", increase_value='" + increase_value + '\'' +
                 ", decrease_value='" + decrease_value + '\'' +
-                ", start_while_loop='" + start_while_loop + '\'' +
-                ", if_condition_and_jump_back='" + if_condition_and_jump_back + '\'' +
+                ", start_while_loop='" + start_loop + '\'' +
+                ", if_condition_and_jump_back='" + end_loop + '\'' +
                 ", get_char='" + get_char + '\'' +
                 ", put_char='" + put_char + '\'' +
                 '}';

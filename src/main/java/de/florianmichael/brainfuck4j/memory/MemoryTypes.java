@@ -17,12 +17,16 @@
 
 package de.florianmichael.brainfuck4j.memory;
 
+import de.florianmichael.brainfuck4j.memory.impl.ByteMemory;
 import de.florianmichael.brainfuck4j.memory.impl.IntegerMemory;
+import de.florianmichael.brainfuck4j.memory.impl.ShortMemory;
 
 import java.util.function.Function;
 
 public enum MemoryTypes {
 
+    BYTE("Byte", ByteMemory::new),
+    SHORT("Short", ShortMemory::new),
     INTEGER("Integer", IntegerMemory::new);
 
     public final String name;

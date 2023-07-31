@@ -1,5 +1,5 @@
 # Brainfuck4J
-One of the fastest Java implementations for the Brainfuck language
+Fast Java implementation for the Brainfuck language
 
 ## What is Brainfuck?
 Brainfuck is an esoteric programming language created in 1993 by Urban Müller. <br>
@@ -21,8 +21,6 @@ You can also find instructions how to implement it into your build script there.
 ### Jar File
 If you just want the latest jar file you can download it from the GitHub [Actions](https://github.com/FlorianMichael/Brainfuck4J/actions) or use the [Release](https://github.com/FlorianMichael/Brainfuck4J/releases).
 
-This library requires you to have [Gson](https://mvnrepository.com/artifact/com.google.code.gson/gson/2.10.1) in your class path
-
 ## Structure
 ### Dialect mappings
 ```java
@@ -30,35 +28,9 @@ public record Dialect(
         String name, 
         String increase_memory_pointer, String decrease_memory_pointer,
         String increase_value, String decrease_value, 
-        String start_while_loop, String if_condition_and_jump_back,
+        String start_loop, String end_loop,
         String get_char, String put_char
 ) {}
-```
-### Optimization base
-```java
-public abstract class AOptimization {
-
-    // Input is the code from the previous step, the method should return the optimized code from this step
-    public abstract String fix(final String input) throws Exception;
-}
-```
-To implement your own Optimization step, you can call **StepTracker#add**
-
-### Memory Set
-```java
-public abstract class AMemory {
-
-    public abstract void increase_memory_pointer(final int value) throws Exception;
-    public abstract void decrease_memory_pointer(final int value) throws Exception;
-
-    public abstract void increase_value(final byte value);
-    public abstract void decrease_value(final byte value);
-
-    public abstract boolean isNull();
-
-    public abstract void set(final char c);
-    public abstract char get();
-}
 ```
 
 ## Example usage
@@ -68,12 +40,25 @@ final Brainfuck4J test = new Brainfuck4J(() -> {
     System.out.println("Code was executed!");
 });
  
-test.run(System.in, System.out, new IntegerMemory(6000), ">++++++[<++++++>-]<.");
+test.run(System.in, System.out, MemoryTypes.INTEGER.create(6000), ">++++++[<++++++>-]<.");
 ```
 ### Converting Dialects
 ```java
 final String trollScriptSource = Dialect.convert(">++++++[<++++++>-]<.", Dialect.BRAINFUCK, Dialect.TROLLSCRIPT);
 ```
+
+## Features
+- [x] Basic interpreter
+- [x] Dialect converter
+- [x] Instruction batching
+- [x] Clear loops
+- [x] Pre-calculating loop points
+
+#### TODO List (http://calmerthanyouare.org/2015/01/07/optimizing-brainfuck.html): 
+- [ ] Scan loops
+- [ ] Operation offsets
+- [ ] Multiplication loops
+- [ ] Copy loops
 
 ## Credits and sources
 This program / software was developed with the help of the following resources:

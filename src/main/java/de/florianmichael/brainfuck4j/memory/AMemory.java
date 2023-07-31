@@ -17,8 +17,9 @@
 
 package de.florianmichael.brainfuck4j.memory;
 
+import de.florianmichael.brainfuck4j.exception.BFRuntimeException;
 import de.florianmichael.brainfuck4j.language.Instruction;
-import de.florianmichael.brainfuck4j.util.ExecutionTracker;
+import de.florianmichael.brainfuck4j.language.InstructionTypes;
 
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -34,5 +35,27 @@ public abstract class AMemory {
 
     public int currentPointer;
 
-    public abstract void execute(final InputStreamReader in, final PrintStream out, final List<Instruction> instructions, final short[] loopPoints, final ExecutionTracker tracker) throws Throwable;
+    public void execute(final InputStreamReader in, final PrintStream out, final List<Instruction> instructions, final short[] loopPoints) throws Throwable {
+        for (int i = 0; i < instructions.size(); i++) {
+            final var instruction = instructions.get(i);
+
+            if (instruction.type == InstructionTypes.INCREASE_MEMORY_POINTER) {
+                if (currentPointer < size - 1) {
+                    currentPointer += instruction.count;
+                } else {
+                    throw new BFRuntimeException(BFRuntimeException.Type.MEMORY_OVERFLOW);
+                }
+            } else if (instruction.type == InstructionTypes.DECREASE_MEMORY_POINTER) {
+                if (currentPointer != 0) {
+                    currentPointer -= instruction.count;
+                } else {
+                    throw new BFRuntimeException(BFRuntimeException.Type.MEMORY_UNDERFLOW);
+                }
+            } else {
+                i = handleInstruction(in, out, instruction.type, instruction.count, i, loopPoints);
+            }
+        }
+    }
+
+    public abstract int handleInstruction(final InputStreamReader in, final PrintStream out, final InstructionTypes type, final int count, final int index, final short[] loopPoints) throws Throwable;
 }

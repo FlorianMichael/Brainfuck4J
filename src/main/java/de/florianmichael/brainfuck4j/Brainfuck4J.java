@@ -20,7 +20,6 @@ package de.florianmichael.brainfuck4j;
 import de.florianmichael.brainfuck4j.exception.BFRuntimeException;
 import de.florianmichael.brainfuck4j.language.Instruction;
 import de.florianmichael.brainfuck4j.language.InstructionTypes;
-import de.florianmichael.brainfuck4j.util.ExecutionTracker;
 import de.florianmichael.brainfuck4j.memory.AMemory;
 import de.florianmichael.brainfuck4j.util.Logger;
 
@@ -31,8 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Brainfuck4J {
-    private final ExecutionTracker instructionTracker = new ExecutionTracker();
-
     private final Logger logger;
     private final Runnable finished;
 
@@ -46,7 +43,6 @@ public class Brainfuck4J {
     }
 
     public void close() {
-        instructionTracker.close();
         this.finished.run();
     }
 
@@ -127,6 +123,7 @@ public class Brainfuck4J {
 
     public void run(final InputStream in, final PrintStream out, final AMemory memory, String input) {
         try {
+            long time = System.currentTimeMillis();
             final var instructionTypes = new ArrayList<InstructionTypes>();
 
             final var code = input.toCharArray();
@@ -144,19 +141,13 @@ public class Brainfuck4J {
             final var inIO = new InputStreamReader(in);
             final var outIO = new PrintStream(out);
 
-            instructionTracker.init();
-            memory.execute(inIO, outIO, instructions, loopPoints, instructionTracker);
+            memory.execute(inIO, outIO, instructions, loopPoints);
             close();
 
-            this.logger.info("Executed code with: " + instructionTracker.getInstructions() + " instructions!");
-            this.logger.info("Time: " + instructionTracker.getTime() + " (ms)");
+            this.logger.info("Instruction count: " + instructions.size() + " | Time: " + (System.currentTimeMillis() - time) + "ms");
         } catch (Throwable e) {
             this.logger.error(e);
             this.close();
         }
-    }
-
-    public ExecutionTracker getInstructionTracker() {
-        return instructionTracker;
     }
 }

@@ -23,21 +23,21 @@ import de.florianmichael.brainfuck4j.memory.AMemory;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
-public class IntegerMemory extends AMemory {
+public class ShortMemory extends AMemory {
 
-    private final int[] memory;
+    private final short[] memory;
 
-    public IntegerMemory(int size) {
+    public ShortMemory(int size) {
         super(size);
-        this.memory = new int[size];
+        this.memory = new short[size];
     }
 
     @Override
     public int handleInstruction(InputStreamReader in, PrintStream out, InstructionTypes type, int count, int index, short[] loopPoints) throws Throwable {
         if (type == InstructionTypes.INCREASE_VALUE) {
-            memory[currentPointer] += count;
+            memory[currentPointer] += (short) count;
         } else if (type == InstructionTypes.DECREASE_VALUE) {
-            memory[currentPointer] -= count;
+            memory[currentPointer] -= (short) count;
         } else if (type == InstructionTypes.START_LOOP) {
             if (memory[currentPointer] == 0) return loopPoints[index];
         } else if (type == InstructionTypes.END_LOOP) {
