@@ -70,52 +70,69 @@ public class Brainfuck4J extends BFConstants {
             if (cancelled) break;
             if (currentCommand == increase_value) {
                 memory.increase_value((byte) 1);
+                instructionTracker.count();
             } else if (currentCommand == increase_value_optimized) {
                 memory.increase_value((byte) (brainfuckCode[++currentOperation] - optimized_count_indicator));
+                instructionTracker.count();
             } else if (currentCommand == decrease_value) {
                 memory.decrease_value((byte) 1);
+                instructionTracker.count();
             } else if (currentCommand == decrease_value_optimized) {
                 memory.decrease_value((byte) (brainfuckCode[++currentOperation] - optimized_count_indicator));
+                instructionTracker.count();
             } else if (currentCommand == increase_memory_pointer) {
                 try {
                     memory.increase_memory_pointer(1);
+                    instructionTracker.count();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else if (currentCommand == increase_memory_optimized) {
                 try {
                     memory.increase_memory_pointer(brainfuckCode[++currentOperation] - optimized_count_indicator);
+                    instructionTracker.count();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else if (currentCommand == decrease_memory_pointer) {
                 try {
                     memory.decrease_memory_pointer(1);
+                    instructionTracker.count();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else if (currentCommand == decrease_memory_optimized) {
                 try {
                     memory.decrease_memory_pointer(brainfuckCode[++currentOperation] - optimized_count_indicator);
+                    instructionTracker.count();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else if (currentCommand == start_while_loop) {
-                if (memory.isNull()) currentOperation = StepTracker.OptimizeLoops.loopPoints[currentOperation];
+                if (memory.isNull()) {
+                    currentOperation = StepTracker.OptimizeLoops.loopPoints[currentOperation];
+                    instructionTracker.count();
+                }
+                instructionTracker.count();
             } else if (currentCommand == if_condition_and_jump_back) {
-                if (!memory.isNull()) currentOperation = StepTracker.OptimizeLoops.loopPoints[currentOperation];
+                if (!memory.isNull()) {
+                    currentOperation = StepTracker.OptimizeLoops.loopPoints[currentOperation];
+                    instructionTracker.count();
+                }
             } else if (currentCommand == get_char) {
                 output.print(memory.get());
+                instructionTracker.count();
             } else if (currentCommand == put_char) {
                 try {
                     memory.set((char) inputStreamReader.read());
+                    instructionTracker.count();
                 } catch (IOException e) {
                     this.logger.error(e);
                 }
             } else if (currentCommand == zero_memory_cell) {
                 memory.set((char) 0);
+                instructionTracker.count();
             }
-            instructionTracker.count();
         }
         close();
 
