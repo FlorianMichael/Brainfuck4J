@@ -33,6 +33,10 @@ public class Brainfuck4J {
     private final Logger logger;
     private final Runnable finished;
 
+    public Brainfuck4J() {
+        this(null);
+    }
+
     public Brainfuck4J(final Runnable finished) {
         this(new Logger.LoggerImpl(), finished);
     }
@@ -43,6 +47,8 @@ public class Brainfuck4J {
     }
 
     public void close() {
+        if (this.finished == null) return;
+
         this.finished.run();
     }
 
@@ -124,7 +130,7 @@ public class Brainfuck4J {
     public void run(final InputStream in, final PrintStream out, final AMemory memory, String input) {
         try {
             long time = System.currentTimeMillis();
-            final List<InstructionTypes> instructionTypes = new ArrayList<InstructionTypes>();
+            final List<InstructionTypes> instructionTypes = new ArrayList<>();
 
             final char[] code = input.toCharArray();
             for (char c : code) {
