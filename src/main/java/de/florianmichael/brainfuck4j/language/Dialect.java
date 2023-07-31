@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package de.florianmichael.brainfuck4j;
+package de.florianmichael.brainfuck4j.language;
 
 import java.util.HashMap;
 import java.util.Map;

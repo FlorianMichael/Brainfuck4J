@@ -15,22 +15,25 @@
  * limitations under the License.
  */
 
-package de.florianmichael.brainfuck4j.optimization.impl;
+package de.florianmichael.brainfuck4j.memory;
 
-import de.florianmichael.brainfuck4j.optimization.AOptimization;
+import de.florianmichael.brainfuck4j.memory.impl.IntegerMemory;
 
-import static de.florianmichael.brainfuck4j.BFConstants.*;
+import java.util.function.Function;
 
-public class StripNonBrainfuckCharacters extends AOptimization {
+public enum MemoryTypes {
 
-    @Override
-    public String fix(String input) {
-        final StringBuilder output = new StringBuilder();
-        for (char c : input.toCharArray()) {
-            if (c == increase_memory_pointer || c == decrease_memory_pointer || c == increase_value || c == decrease_value || c == start_while_loop || c == if_condition_and_jump_back || c == get_char || c == put_char) {
-                output.append(c);
-            }
-        }
-        return output.toString();
+    INTEGER("Integer", IntegerMemory::new);
+
+    public final String name;
+    private final Function<Integer, AMemory> creator;
+
+    MemoryTypes(String name, Function<Integer, AMemory> creator) {
+        this.name = name;
+        this.creator = creator;
+    }
+
+    public AMemory create(final int size) {
+        return creator.apply(size);
     }
 }

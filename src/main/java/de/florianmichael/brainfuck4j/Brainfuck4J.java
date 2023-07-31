@@ -17,23 +17,24 @@
 
 package de.florianmichael.brainfuck4j;
 
-import de.florianmichael.brainfuck4j.optimization.StepTracker;
+import de.florianmichael.brainfuck4j.exception.BFRuntimeException;
+import de.florianmichael.brainfuck4j.language.Instruction;
+import de.florianmichael.brainfuck4j.language.InstructionTypes;
 import de.florianmichael.brainfuck4j.util.ExecutionTracker;
 import de.florianmichael.brainfuck4j.memory.AMemory;
 import de.florianmichael.brainfuck4j.util.Logger;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Brainfuck4J extends BFConstants {
+public class Brainfuck4J {
     private final ExecutionTracker instructionTracker = new ExecutionTracker();
 
     private final Logger logger;
     private final Runnable finished;
-
-    private boolean cancelled;
 
     public Brainfuck4J(final Runnable finished) {
         this(new Logger.LoggerImpl(), finished);
@@ -46,98 +47,113 @@ public class Brainfuck4J extends BFConstants {
 
     public void close() {
         instructionTracker.close();
-        cancelled = true;
-
         this.finished.run();
     }
 
-    public void run(final InputStream input, final PrintStream output, final AMemory memory, String code) {
-        final InputStreamReader inputStreamReader = new InputStreamReader(input);
-        try {
-            code = StepTracker.fix(this.logger, code);
-        } catch (Exception e) {
-            this.logger.error(e);
-            return;
+    private List<Instruction> batch(final List<InstructionTypes> instructionTypes) {
+        final var instructions = new ArrayList<Instruction>();
+        InstructionTypes last = null;
+        for (InstructionTypes type : instructionTypes) {
+            if (instructions.isEmpty() || type == InstructionTypes.START_LOOP || type == InstructionTypes.END_LOOP || type == InstructionTypes.GET_CHAR || type == InstructionTypes.PUT_CHAR) {
+                instructions.add(new Instruction(type));
+                last = type;
+                continue;
+            }
+            if (last == type) {
+                instructions.get(instructions.size() - 1).increment();
+            } else {
+                instructions.add(new Instruction(type));
+            }
+            last = type;
+        }
+        return instructions;
+    }
+
+    private List<InstructionTypes> clearLoops(final List<InstructionTypes> instructions) {
+        final var newInstructions = new ArrayList<InstructionTypes>();
+        for (int i = 0; i < instructions.size(); i++) {
+            final var old = instructions.get(i);
+            if (instructions.size() - 1 > i + 2) {
+                final var operator = instructions.get(i + 1);
+                if (old == InstructionTypes.START_LOOP && (operator == InstructionTypes.INCREASE_VALUE || operator == InstructionTypes.DECREASE_VALUE) && instructions.get(i + 2) == InstructionTypes.END_LOOP) {
+                    newInstructions.add(InstructionTypes.CLEAR_LOOP);
+                    i += 2;
+                    continue;
+                }
+            }
+            newInstructions.add(old);
+        }
+        return newInstructions;
+    }
+
+    public short[] loopPoints;
+
+    private void calculateLoopPoints(final List<Instruction> instructions) {
+        loopPoints = new short[instructions.size()];
+        short start;
+        short end = (short) (instructions.size() - 1);
+        int in = 0;
+
+        for (Instruction instruction : instructions) {
+            if (instruction.type == InstructionTypes.START_LOOP) in++;
+            if (instruction.type == InstructionTypes.END_LOOP) in--;
+
+            if (in < 0) break;
         }
 
-        instructionTracker.init();
+        if (in != 0) {
+            throw new BFRuntimeException(BFRuntimeException.Type.INVALID_LOOK_SYNTAX);
+        }
 
-        final char[] brainfuckCode = code.toCharArray();
-        this.logger.info("Executing code with " + brainfuckCode.length + " operations!: " + code);
-        for (int currentOperation = 0; currentOperation < brainfuckCode.length; currentOperation++) {
-            final char currentCommand = brainfuckCode[currentOperation];
-
-            if (cancelled) break;
-            if (currentCommand == increase_value) {
-                memory.increase_value((byte) 1);
-                instructionTracker.count();
-            } else if (currentCommand == increase_value_optimized) {
-                memory.increase_value((byte) (brainfuckCode[++currentOperation] - optimized_count_indicator));
-                instructionTracker.count();
-            } else if (currentCommand == decrease_value) {
-                memory.decrease_value((byte) 1);
-                instructionTracker.count();
-            } else if (currentCommand == decrease_value_optimized) {
-                memory.decrease_value((byte) (brainfuckCode[++currentOperation] - optimized_count_indicator));
-                instructionTracker.count();
-            } else if (currentCommand == increase_memory_pointer) {
-                try {
-                    memory.increase_memory_pointer(1);
-                    instructionTracker.count();
-                } catch (Exception e) {
-                    e.printStackTrace();
+        for (start = 0; start < end; start++) {
+            if (instructions.get(start).type == InstructionTypes.START_LOOP) {
+                in = 0;
+                for (short i = (short) (start + 1); i <= end; i++) {
+                    if (instructions.get(i).type == InstructionTypes.END_LOOP) {
+                        if (in <= 0) {
+                            loopPoints[start] = i;
+                            loopPoints[i] = start;
+                            break;
+                        } else {
+                            in--;
+                        }
+                    } else if (instructions.get(i).type == InstructionTypes.START_LOOP) {
+                        in++;
+                    }
                 }
-            } else if (currentCommand == increase_memory_optimized) {
-                try {
-                    memory.increase_memory_pointer(brainfuckCode[++currentOperation] - optimized_count_indicator);
-                    instructionTracker.count();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else if (currentCommand == decrease_memory_pointer) {
-                try {
-                    memory.decrease_memory_pointer(1);
-                    instructionTracker.count();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else if (currentCommand == decrease_memory_optimized) {
-                try {
-                    memory.decrease_memory_pointer(brainfuckCode[++currentOperation] - optimized_count_indicator);
-                    instructionTracker.count();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else if (currentCommand == start_while_loop) {
-                if (memory.isNull()) {
-                    currentOperation = StepTracker.OptimizeLoops.loopPoints[currentOperation];
-                    instructionTracker.count();
-                }
-                instructionTracker.count();
-            } else if (currentCommand == if_condition_and_jump_back) {
-                if (!memory.isNull()) {
-                    currentOperation = StepTracker.OptimizeLoops.loopPoints[currentOperation];
-                    instructionTracker.count();
-                }
-            } else if (currentCommand == get_char) {
-                output.print(memory.get());
-                instructionTracker.count();
-            } else if (currentCommand == put_char) {
-                try {
-                    memory.set((char) inputStreamReader.read());
-                    instructionTracker.count();
-                } catch (IOException e) {
-                    this.logger.error(e);
-                }
-            } else if (currentCommand == zero_memory_cell) {
-                memory.set((char) 0);
-                instructionTracker.count();
             }
         }
-        close();
+    }
 
-        this.logger.info("Executed code with: " + instructionTracker.getInstructions() + " instructions!");
-        this.logger.info("Time: " + instructionTracker.getTime() + " (ms)");
+    public void run(final InputStream in, final PrintStream out, final AMemory memory, String input) {
+        try {
+            final var instructionTypes = new ArrayList<InstructionTypes>();
+
+            final var code = input.toCharArray();
+            for (char c : code) {
+                final var type = InstructionTypes.fromLeadingCharacter(c);
+                if (type == null) {
+                    continue;
+                }
+                instructionTypes.add(type);
+            }
+
+            final var instructions = batch(clearLoops(instructionTypes));
+            calculateLoopPoints(instructions);
+
+            final var inIO = new InputStreamReader(in);
+            final var outIO = new PrintStream(out);
+
+            instructionTracker.init();
+            memory.execute(inIO, outIO, instructions, loopPoints, instructionTracker);
+            close();
+
+            this.logger.info("Executed code with: " + instructionTracker.getInstructions() + " instructions!");
+            this.logger.info("Time: " + instructionTracker.getTime() + " (ms)");
+        } catch (Throwable e) {
+            this.logger.error(e);
+            this.close();
+        }
     }
 
     public ExecutionTracker getInstructionTracker() {

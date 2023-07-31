@@ -15,9 +15,18 @@
  * limitations under the License.
  */
 
-package de.florianmichael.brainfuck4j.optimization;
+package de.florianmichael.brainfuck4j.language;
 
-public abstract class AOptimization {
+public class Instruction {
 
-    public abstract String fix(final String input) throws Exception;
+    public InstructionTypes type;
+    public int count = 1;
+
+    public Instruction(InstructionTypes type) {
+        this.type = type;
+    }
+
+    public void increment() {
+        this.count++;
+    }
 }

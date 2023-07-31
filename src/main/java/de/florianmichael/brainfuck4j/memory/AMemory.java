@@ -17,25 +17,22 @@
 
 package de.florianmichael.brainfuck4j.memory;
 
+import de.florianmichael.brainfuck4j.language.Instruction;
+import de.florianmichael.brainfuck4j.util.ExecutionTracker;
+
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.util.List;
+
 public abstract class AMemory {
-    public final String name;
+
     public final int size;
 
-    public int currentPointer;
-
-    public AMemory(String name, int size) {
-        this.name = name;
+    public AMemory(int size) {
         this.size = size;
     }
 
-    public abstract void increase_memory_pointer(final int value) throws Exception;
-    public abstract void decrease_memory_pointer(final int value) throws Exception;
+    public int currentPointer;
 
-    public abstract void increase_value(final byte value);
-    public abstract void decrease_value(final byte value);
-
-    public abstract boolean isNull();
-
-    public abstract void set(final char c);
-    public abstract char get();
+    public abstract void execute(final InputStreamReader in, final PrintStream out, final List<Instruction> instructions, final short[] loopPoints, final ExecutionTracker tracker) throws Throwable;
 }
