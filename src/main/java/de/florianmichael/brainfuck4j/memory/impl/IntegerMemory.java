@@ -66,9 +66,6 @@ public class IntegerMemory extends AMemory {
                 memory[currentPointer] = (byte) in.read();
             } else if (instruction.type == InstructionTypes.CLEAR_LOOP) {
                 memory[currentPointer] = (byte) 0;
-            } else if (instruction.type == InstructionTypes.COPY_LOOP) {
-                memory[currentPointer + 2] += memory[currentPointer];
-                memory[currentPointer] = 0;
             }
         }
     }
