@@ -1,5 +1,5 @@
 # Brainfuck4J
-Fast Java implementation for the Brainfuck language
+Fast Java interpreter for Brainfuck language with optimizations, memory management and multi dialect support
 
 ## What is Brainfuck?
 Brainfuck is an esoteric programming language created in 1993 by Urban Müller. <br>
