@@ -33,6 +33,8 @@ public record Dialect(
 ) {}
 ```
 
+All undocumented methods and classes are parts of the internals.
+
 ## Example usage
 ### Execute a basic brainfuck code
 ```java

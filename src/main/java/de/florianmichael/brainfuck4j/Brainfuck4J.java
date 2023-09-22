@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The `Brainfuck4J` class provides an interpreter for the Brainfuck programming language.
+ * This class provides an interpreter for the Brainfuck programming language.
  * Brainfuck is a minimalistic programming language that operates on a simple memory model.
  * This class allows you to run Brainfuck programs, taking input from an InputStream and
  * sending output to a PrintStream, with support for custom memory implementations.

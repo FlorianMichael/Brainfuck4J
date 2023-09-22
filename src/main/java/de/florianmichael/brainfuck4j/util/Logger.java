@@ -17,11 +17,17 @@
 
 package de.florianmichael.brainfuck4j.util;
 
+/**
+ * A minimalistic wrapper for a logger implementation
+ */
 public interface Logger {
 
     void info(final String message);
     void error(final Throwable t);
 
+    /**
+     * Default logging implementation using System's output stream
+     */
     class LoggerImpl implements Logger {
 
         @Override

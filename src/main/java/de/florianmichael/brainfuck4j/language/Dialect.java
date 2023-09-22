@@ -53,9 +53,10 @@ public class Dialect {
 
     /**
      * Converts Brainfuck code from one Dialect to another
+     *
      * @param input The original code
-     * @param from The original dialect the code was written
-     * @param to The target dialect the code should transform to
+     * @param from  The original dialect the code was written
+     * @param to    The target dialect the code should transform to
      * @return The transformed code
      */
     public static String convert(String input, final Dialect from, final Dialect to) {
