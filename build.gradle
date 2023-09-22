@@ -39,7 +39,7 @@ publishing {
 
             pom {
                 name = artifactId
-                description = "Fast Java implementation for the Brainfuck language"
+                description = "Fast Java interpreter for Brainfuck language with optimizations, memory management and multi dialect support"
                 url = "https://github.com/FlorianMichael/Brainfuck4J"
                 licenses {
                     license {

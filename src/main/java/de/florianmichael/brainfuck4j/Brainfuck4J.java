@@ -29,23 +29,46 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The `Brainfuck4J` class provides an interpreter for the Brainfuck programming language.
+ * Brainfuck is a minimalistic programming language that operates on a simple memory model.
+ * This class allows you to run Brainfuck programs, taking input from an InputStream and
+ * sending output to a PrintStream, with support for custom memory implementations.
+ */
 public class Brainfuck4J {
     private final Logger logger;
     private final Runnable finished;
 
+    /**
+     * Constructs an interpreter with a default logger and no finish callback.
+     */
     public Brainfuck4J() {
         this(null);
     }
 
+    /**
+     * Constructs an interpreter with a default logger and a finish callback.
+     *
+     * @param finished A Runnable to be executed when the interpreter finishes.
+     */
     public Brainfuck4J(final Runnable finished) {
         this(new Logger.LoggerImpl(), finished);
     }
 
+    /**
+     * Constructs an interpreter with a custom logger and a finish callback.
+     *
+     * @param logger   The custom logger implementation to use.
+     * @param finished A Runnable to be executed when the interpreter finishes.
+     */
     public Brainfuck4J(final Logger logger, final Runnable finished) {
         this.logger = logger;
         this.finished = finished;
     }
 
+    /**
+     * Closes the interpreter by executing the finish callback if provided.
+     */
     public void close() {
         if (this.finished == null) return;
 
@@ -127,6 +150,14 @@ public class Brainfuck4J {
         }
     }
 
+    /**
+     * Runs a Brainfuck program.
+     *
+     * @param in     An InputStream to read input from.
+     * @param out    A PrintStream to write output to.
+     * @param memory The memory implementation to use.
+     * @param input  The Brainfuck program code as a String.
+     */
     public void run(final InputStream in, final PrintStream out, final AMemory memory, String input) {
         try {
             long time = System.currentTimeMillis();
