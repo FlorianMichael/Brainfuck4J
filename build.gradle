@@ -1,6 +1,7 @@
 plugins {
     id "java"
     id "maven-publish"
+    id "signing"
 }
 
 archivesBaseName = "Brainfuck4J"
@@ -9,6 +10,11 @@ group = "de.florianmichael"
 
 repositories {
     mavenCentral()
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
 }
 
 jar {
@@ -21,6 +27,17 @@ publishing {
             name = "reposilite"
             def releasesUrl = "https://maven.lenni0451.net/releases"
             def snapshotsUrl = "https://maven.lenni0451.net/snapshots"
+            url = project.version.endsWith("SNAPSHOT") ? snapshotsUrl : releasesUrl
+
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+        maven {
+            name = "ossrh"
+            def releasesUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
             url = project.version.endsWith("SNAPSHOT") ? snapshotsUrl : releasesUrl
 
             credentials(PasswordCredentials)
@@ -60,4 +77,14 @@ publishing {
             }
         }
     }
+}
+
+signing {
+    setRequired false
+    sign configurations.archives
+    sign publishing.publications.maven
+}
+
+project.tasks.withType(PublishToMavenRepository).forEach {
+    it.dependsOn(project.tasks.withType(Sign))
 }

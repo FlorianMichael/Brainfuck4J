@@ -15,7 +15,7 @@ If you just want to talk or need help with Brainfuck4J feel free to join my
 
 ## How to add this to your project
 ### Gradle/Maven
-To use Brainfuck4J with Gradle/Maven you can use this [Maven server](https://maven.lenni0451.net/#/releases/de/florianmichael/Brainfuck4J) or [Jitpack](https://jitpack.io/#FlorianMichael/Brainfuck4J).  
+To use Brainfuck4J with Gradle/Maven you can use [Maven Central](https://mvnrepository.com/artifact/de.florianmichael/Brainfuck4J), [Lenni0451 server](https://maven.lenni0451.net/#/releases/de/florianmichael/Brainfuck4J) or [Jitpack](https://jitpack.io/#FlorianMichael/Brainfuck4J).  
 You can also find instructions how to implement it into your build script there.
 
 ### Jar File
