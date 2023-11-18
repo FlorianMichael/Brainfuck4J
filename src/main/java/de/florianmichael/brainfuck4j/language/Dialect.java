@@ -17,17 +17,21 @@
 
 package de.florianmichael.brainfuck4j.language;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * This class represents all operations which exist in the Brainfuck specification
  */
 public class Dialect {
-
-    public static Dialect BRAINFUCK = new Dialect("Brainfuck", ">", "<", "+", "-", "[", "]", ",", ".");
-    public static Dialect TROLLSCRIPT = new Dialect("Trollscript", "ooo", "ool", "olo", "oll", "loo", "lol", "llo", "lll");
-    public static Dialect OOK = new Dialect("Ook!", "Ook. Ook?", "Ook? Ook.", "Ook. Ook.", "Ook! Ook!", "Ook! Ook.", "Ook. Ook!", "Ook! Ook?", "Ook? Ook!");
+    public final static List<Dialect> DEFAULTS = Arrays.asList(
+            new Dialect("Brainfuck", ">", "<", "+", "-", "[", "]", ",", "."),
+            new Dialect("Trollscript", "ooo", "ool", "olo", "oll", "loo", "lol", "llo", "lll"),
+            new Dialect("Ook!", "Ook. Ook?", "Ook? Ook.", "Ook. Ook.", "Ook! Ook!", "Ook! Ook.", "Ook. Ook!", "Ook! Ook?", "Ook? Ook!"),
+            new Dialect("COW", "moO", "mOo", "MoO", "MOo", "MOO", "moo", "Moo", "Moo")
+    );
 
     public final String name;
     public final String increase_memory_pointer;
@@ -57,19 +61,9 @@ public class Dialect {
      * @param input The original code
      * @param from  The original dialect the code was written
      * @param to    The target dialect the code should transform to
-     * @return The transformed code
      */
-    public static String convert(String input, final Dialect from, final Dialect to) {
-        final Map<String, String> diff = new HashMap<>();
-
-        diff.put(from.increase_memory_pointer, to.increase_memory_pointer);
-        diff.put(from.decrease_memory_pointer, from.decrease_memory_pointer);
-        diff.put(from.increase_value, to.increase_value);
-        diff.put(from.decrease_value, from.decrease_value);
-        diff.put(from.start_loop, to.start_loop);
-        diff.put(from.end_loop, from.end_loop);
-        diff.put(from.get_char, to.get_char);
-        diff.put(from.put_char, from.put_char);
+    public static void convert(String input, final Dialect from, final Dialect to) {
+        final Map<String, String> diff = from.compare(to);
 
         final StringBuilder output = new StringBuilder();
 
@@ -84,8 +78,27 @@ public class Dialect {
             }
             input = input.substring(count);
         }
+        input = output.toString();
+    }
 
-        return output.toString();
+    /**
+     * Compares two Dialects and returns a Map with the differences
+     *
+     * @param other The other Dialect to compare with
+     * @return A Map with the differences
+     */
+    public Map<String, String> compare(final Dialect other) {
+        final Map<String, String> diff = new HashMap<>();
+        diff.put(increase_memory_pointer, other.increase_memory_pointer);
+        diff.put(decrease_memory_pointer, other.decrease_memory_pointer);
+        diff.put(increase_value, other.increase_value);
+        diff.put(decrease_value, other.decrease_value);
+        diff.put(start_loop, other.start_loop);
+        diff.put(end_loop, other.end_loop);
+        diff.put(get_char, other.get_char);
+        diff.put(put_char, other.put_char);
+
+        return diff;
     }
 
     @Override
