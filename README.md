@@ -73,6 +73,8 @@ All undocumented methods and classes are parts of the internals.
 - [ ] Operation offsets
 - [ ] Multiplication loops
 - [ ] Copy loops
+- [ ] GUI (ImGui?)
+- [ ] Executable jar file 
 
 ## Credits and sources
 This program / software was developed with the help of the following resources:
