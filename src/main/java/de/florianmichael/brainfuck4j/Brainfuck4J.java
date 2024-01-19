@@ -21,7 +21,6 @@ import de.florianmichael.brainfuck4j.exception.BFRuntimeException;
 import de.florianmichael.brainfuck4j.language.Instruction;
 import de.florianmichael.brainfuck4j.language.InstructionTypes;
 import de.florianmichael.brainfuck4j.memory.AMemory;
-import de.florianmichael.brainfuck4j.util.Logger;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -36,8 +35,8 @@ import java.util.List;
  * sending output to a PrintStream, with support for custom memory implementations.
  */
 public class Brainfuck4J {
-    private final Logger logger;
-    private final Runnable finished;
+
+    private final Runnable closeEvent;
 
     /**
      * Constructs an interpreter with a default logger and no finish callback.
@@ -49,34 +48,23 @@ public class Brainfuck4J {
     /**
      * Constructs an interpreter with a default logger and a finish callback.
      *
-     * @param finished A Runnable to be executed when the interpreter finishes.
+     * @param closeEvent A Runnable to be executed when the interpreter finishes.
      */
-    public Brainfuck4J(final Runnable finished) {
-        this(new Logger.LoggerImpl(), finished);
-    }
-
-    /**
-     * Constructs an interpreter with a custom logger and a finish callback.
-     *
-     * @param logger   The custom logger implementation to use.
-     * @param finished A Runnable to be executed when the interpreter finishes.
-     */
-    public Brainfuck4J(final Logger logger, final Runnable finished) {
-        this.logger = logger;
-        this.finished = finished;
+    public Brainfuck4J(final Runnable closeEvent) {
+        this.closeEvent = closeEvent;
     }
 
     /**
      * Closes the interpreter by executing the finish callback if provided.
      */
     public void close() {
-        if (this.finished == null) return;
-
-        this.finished.run();
+        if (this.closeEvent != null) {
+            this.closeEvent.run();
+        }
     }
 
     private List<Instruction> batch(final List<InstructionTypes> instructionTypes) {
-        final List<Instruction> instructions = new ArrayList<Instruction>();
+        final List<Instruction> instructions = new ArrayList<>();
         InstructionTypes last = null;
         for (InstructionTypes type : instructionTypes) {
             if (instructions.isEmpty() || type == InstructionTypes.START_LOOP || type == InstructionTypes.END_LOOP || type == InstructionTypes.GET_CHAR || type == InstructionTypes.PUT_CHAR) {
@@ -95,7 +83,7 @@ public class Brainfuck4J {
     }
 
     private List<InstructionTypes> clearLoops(final List<InstructionTypes> instructions) {
-        final List<InstructionTypes> newInstructions = new ArrayList<InstructionTypes>();
+        final List<InstructionTypes> newInstructions = new ArrayList<>();
         for (int i = 0; i < instructions.size(); i++) {
             final InstructionTypes old = instructions.get(i);
             if (instructions.size() - 1 > i + 2) {
@@ -127,7 +115,7 @@ public class Brainfuck4J {
         }
 
         if (in != 0) {
-            throw new BFRuntimeException(BFRuntimeException.Type.INVALID_LOOK_SYNTAX);
+            throw new BFRuntimeException("Invalid Loops. Please check your Brainfuck source code");
         }
 
         for (start = 0; start < end; start++) {
@@ -157,34 +145,31 @@ public class Brainfuck4J {
      * @param out    A PrintStream to write output to.
      * @param memory The memory implementation to use.
      * @param input  The Brainfuck program code as a String.
+     * @return A set of all instructions from the parsed input
+     * @throws Throwable If an error occurs during the execution of the code
      */
-    public void run(final InputStream in, final PrintStream out, final AMemory memory, String input) {
-        try {
-            long time = System.currentTimeMillis();
-            final List<InstructionTypes> instructionTypes = new ArrayList<>();
+    public List<Instruction> run(final InputStream in, final PrintStream out, final AMemory memory, String input) throws Throwable {
+        final List<InstructionTypes> instructionTypes = new ArrayList<>();
 
-            final char[] code = input.toCharArray();
-            for (char c : code) {
-                final InstructionTypes type = InstructionTypes.fromLeadingCharacter(c);
-                if (type == null) {
-                    continue;
-                }
-                instructionTypes.add(type);
+        final char[] code = input.toCharArray();
+        for (char c : code) {
+            final InstructionTypes type = InstructionTypes.fromLeadingCharacter(c);
+            if (type == null) {
+                continue;
             }
-
-            final List<Instruction> instructions = batch(clearLoops(instructionTypes));
-            calculateLoopPoints(instructions);
-
-            final InputStreamReader inIO = new InputStreamReader(in);
-            final PrintStream outIO = new PrintStream(out);
-
-            memory.execute(inIO, outIO, instructions, loopPoints);
-            close();
-
-            this.logger.info("Instruction count: " + instructions.size() + " | Time: " + (System.currentTimeMillis() - time) + "ms");
-        } catch (Throwable e) {
-            this.logger.error(e);
-            this.close();
+            instructionTypes.add(type);
         }
+
+        final List<Instruction> instructions = batch(clearLoops(instructionTypes));
+        calculateLoopPoints(instructions);
+
+        final InputStreamReader inIO = new InputStreamReader(in);
+        final PrintStream outIO = new PrintStream(out);
+
+        memory.execute(inIO, outIO, instructions, loopPoints);
+
+        this.close();
+        return instructions;
     }
+
 }

@@ -19,24 +19,8 @@ package de.florianmichael.brainfuck4j.exception;
 
 public class BFRuntimeException extends RuntimeException {
 
-    public BFRuntimeException(final Type type) {
-        super(type.getMessage());
+    public BFRuntimeException(final String message) {
+        super(message);
     }
 
-    public enum Type {
-        MEMORY_OVERFLOW("Memory OVERFLOW when trying to increase memory pointer"),
-        MEMORY_UNDERFLOW("Memory UNDERFLOW when trying to decrease memory pointer"),
-
-        INVALID_LOOK_SYNTAX("Invalid Loops. Please check your Brainfuck source code");
-
-        private final String message;
-
-        Type(String message) {
-            this.message = message;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-    }
 }

@@ -18,6 +18,7 @@
 package de.florianmichael.brainfuck4j.language;
 
 public enum InstructionTypes {
+
     INCREASE_VALUE('+'),
     DECREASE_VALUE('-'),
     INCREASE_MEMORY_POINTER('>'),
@@ -37,10 +38,9 @@ public enum InstructionTypes {
     public static InstructionTypes fromLeadingCharacter(final char character) {
         for (InstructionTypes value : values()) {
             if (value.leadingCharacter == null) continue;
-            if (value.leadingCharacter == character) {
-                return value;
-            }
+            if (value.leadingCharacter == character) return value;
         }
         return null;
     }
+
 }

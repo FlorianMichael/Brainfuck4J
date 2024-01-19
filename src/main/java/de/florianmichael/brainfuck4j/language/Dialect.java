@@ -26,7 +26,8 @@ import java.util.Map;
  * This class represents all operations which exist in the Brainfuck specification
  */
 public class Dialect {
-    public final static List<Dialect> DEFAULTS = Arrays.asList(
+    
+    public static final List<Dialect> DEFAULTS = Arrays.asList(
             new Dialect("Brainfuck", ">", "<", "+", "-", "[", "]", ",", "."),
             new Dialect("Trollscript", "ooo", "ool", "olo", "oll", "loo", "lol", "llo", "lll"),
             new Dialect("Ook!", "Ook. Ook?", "Ook? Ook.", "Ook. Ook.", "Ook! Ook!", "Ook! Ook.", "Ook. Ook!", "Ook! Ook?", "Ook? Ook!"),
@@ -115,4 +116,5 @@ public class Dialect {
                 ", put_char='" + put_char + '\'' +
                 '}';
     }
+    
 }

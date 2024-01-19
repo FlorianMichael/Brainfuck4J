@@ -51,4 +51,5 @@ public class ShortMemory extends AMemory {
         }
         return index;
     }
+
 }

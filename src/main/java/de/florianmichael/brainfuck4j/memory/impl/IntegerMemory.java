@@ -51,4 +51,5 @@ public class IntegerMemory extends AMemory {
         }
         return index;
     }
+
 }

@@ -40,4 +40,5 @@ public enum MemoryTypes {
     public AMemory create(final int size) {
         return creator.apply(size);
     }
+
 }

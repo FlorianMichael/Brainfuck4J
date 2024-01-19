@@ -51,4 +51,5 @@ public class ByteMemory extends AMemory {
         }
         return index;
     }
+
 }

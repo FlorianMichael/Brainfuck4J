@@ -43,13 +43,13 @@ public abstract class AMemory {
                 if (currentPointer < size - 1) {
                     currentPointer += instruction.count;
                 } else {
-                    throw new BFRuntimeException(BFRuntimeException.Type.MEMORY_OVERFLOW);
+                    throw new BFRuntimeException("Memory OVERFLOW when trying to increase memory pointer");
                 }
             } else if (instruction.type == InstructionTypes.DECREASE_MEMORY_POINTER) {
                 if (currentPointer != 0) {
                     currentPointer -= instruction.count;
                 } else {
-                    throw new BFRuntimeException(BFRuntimeException.Type.MEMORY_UNDERFLOW);
+                    throw new BFRuntimeException("Memory UNDERFLOW when trying to decrease memory pointer");
                 }
             } else {
                 i = handleInstruction(in, out, instruction.type, instruction.count, i, loopPoints);
@@ -58,4 +58,5 @@ public abstract class AMemory {
     }
 
     public abstract int handleInstruction(final InputStreamReader in, final PrintStream out, final InstructionTypes type, final int count, final int index, final short[] loopPoints) throws Throwable;
+
 }
