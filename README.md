@@ -8,14 +8,12 @@ Notable for its extreme minimalism, the language consists of only eight simple c
 Learn more about Brainfuck [here](https://en.wikipedia.org/wiki/Brainfuck)
 
 ## Contact
-If you encounter any issues, please report them on the
-[issue tracker](https://github.com/FlorianMichael/Brainfuck4J/issues).  
-If you just want to talk or need help with Brainfuck4J feel free to join my
-[Discord](https://discord.gg/BwWhCHUKDf).
+If you encounter any issues, please report them on the [issue tracker](https://github.com/FlorianMichael/Brainfuck4J/issues).  
+If you just want to talk or need help with Brainfuck4J feel free to join my [Discord](https://discord.gg/BwWhCHUKDf).
 
 ## How to add this to your project
 ### Gradle/Maven
-To use Brainfuck4J with Gradle/Maven you can use [Maven Central](https://mvnrepository.com/artifact/de.florianmichael/Brainfuck4J), [Lenni0451 server](https://maven.lenni0451.net/#/releases/de/florianmichael/Brainfuck4J) or [Jitpack](https://jitpack.io/#FlorianMichael/Brainfuck4J).  
+To use Brainfuck4J with Gradle/Maven you can use [Maven Central](https://mvnrepository.com/artifact/de.florianmichael/Brainfuck4J), [Lenni0451's Maven](https://maven.lenni0451.net/#/releases/de/florianmichael/Brainfuck4J) or [Jitpack](https://jitpack.io/#FlorianMichael/Brainfuck4J).  
 You can also find instructions how to implement it into your build script there.
 
 ### Jar File
