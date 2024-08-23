@@ -17,7 +17,7 @@
 
 package de.florianmichael.brainfuck4j.language;
 
-public enum InstructionTypes {
+public enum InstructionType {
 
     INCREASE_VALUE('+'),
     DECREASE_VALUE('-'),
@@ -27,18 +27,26 @@ public enum InstructionTypes {
     END_LOOP(']'),
     GET_CHAR('.'),
     PUT_CHAR(','),
-    CLEAR_LOOP(null);
+    CLEAR_LOOP;
 
-    public final Character leadingCharacter;
+    public final Character indicator;
 
-    InstructionTypes(final Character leadingCharacter) {
-        this.leadingCharacter = leadingCharacter;
+    InstructionType() {
+        this.indicator = null;
     }
 
-    public static InstructionTypes fromLeadingCharacter(final char character) {
-        for (InstructionTypes value : values()) {
-            if (value.leadingCharacter == null) continue;
-            if (value.leadingCharacter == character) return value;
+    InstructionType(final Character indicator) {
+        this.indicator = indicator;
+    }
+
+    public boolean custom() {
+        return this.indicator == null;
+    }
+
+    public static InstructionType fromLeadingCharacter(final char character) {
+        for (InstructionType value : values()) {
+            if (value.indicator == null) continue;
+            if (value.indicator == character) return value;
         }
         return null;
     }

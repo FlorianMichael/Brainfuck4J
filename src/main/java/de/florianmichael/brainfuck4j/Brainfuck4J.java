@@ -19,7 +19,7 @@ package de.florianmichael.brainfuck4j;
 
 import de.florianmichael.brainfuck4j.exception.BFRuntimeException;
 import de.florianmichael.brainfuck4j.language.Instruction;
-import de.florianmichael.brainfuck4j.language.InstructionTypes;
+import de.florianmichael.brainfuck4j.language.InstructionType;
 import de.florianmichael.brainfuck4j.memory.AMemory;
 
 import java.io.InputStream;
@@ -63,11 +63,11 @@ public class Brainfuck4J {
         }
     }
 
-    private List<Instruction> batch(final List<InstructionTypes> instructionTypes) {
+    private List<Instruction> batch(final List<InstructionType> instructionTypes) {
         final List<Instruction> instructions = new ArrayList<>();
-        InstructionTypes last = null;
-        for (InstructionTypes type : instructionTypes) {
-            if (instructions.isEmpty() || type == InstructionTypes.START_LOOP || type == InstructionTypes.END_LOOP || type == InstructionTypes.GET_CHAR || type == InstructionTypes.PUT_CHAR) {
+        InstructionType last = null;
+        for (InstructionType type : instructionTypes) {
+            if (instructions.isEmpty() || type == InstructionType.START_LOOP || type == InstructionType.END_LOOP || type == InstructionType.GET_CHAR || type == InstructionType.PUT_CHAR) {
                 instructions.add(new Instruction(type));
                 last = type;
                 continue;
@@ -82,14 +82,14 @@ public class Brainfuck4J {
         return instructions;
     }
 
-    private List<InstructionTypes> clearLoops(final List<InstructionTypes> instructions) {
-        final List<InstructionTypes> newInstructions = new ArrayList<>();
+    private List<InstructionType> clearLoops(final List<InstructionType> instructions) {
+        final List<InstructionType> newInstructions = new ArrayList<>();
         for (int i = 0; i < instructions.size(); i++) {
-            final InstructionTypes old = instructions.get(i);
+            final InstructionType old = instructions.get(i);
             if (instructions.size() - 1 > i + 2) {
-                final InstructionTypes operator = instructions.get(i + 1);
-                if (old == InstructionTypes.START_LOOP && (operator == InstructionTypes.INCREASE_VALUE || operator == InstructionTypes.DECREASE_VALUE) && instructions.get(i + 2) == InstructionTypes.END_LOOP) {
-                    newInstructions.add(InstructionTypes.CLEAR_LOOP);
+                final InstructionType operator = instructions.get(i + 1);
+                if (old == InstructionType.START_LOOP && (operator == InstructionType.INCREASE_VALUE || operator == InstructionType.DECREASE_VALUE) && instructions.get(i + 2) == InstructionType.END_LOOP) {
+                    newInstructions.add(InstructionType.CLEAR_LOOP);
                     i += 2;
                     continue;
                 }
@@ -108,8 +108,8 @@ public class Brainfuck4J {
         int in = 0;
 
         for (Instruction instruction : instructions) {
-            if (instruction.type == InstructionTypes.START_LOOP) in++;
-            if (instruction.type == InstructionTypes.END_LOOP) in--;
+            if (instruction.type == InstructionType.START_LOOP) in++;
+            if (instruction.type == InstructionType.END_LOOP) in--;
 
             if (in < 0) break;
         }
@@ -119,10 +119,10 @@ public class Brainfuck4J {
         }
 
         for (start = 0; start < end; start++) {
-            if (instructions.get(start).type == InstructionTypes.START_LOOP) {
+            if (instructions.get(start).type == InstructionType.START_LOOP) {
                 in = 0;
                 for (short i = (short) (start + 1); i <= end; i++) {
-                    if (instructions.get(i).type == InstructionTypes.END_LOOP) {
+                    if (instructions.get(i).type == InstructionType.END_LOOP) {
                         if (in <= 0) {
                             loopPoints[start] = i;
                             loopPoints[i] = start;
@@ -130,7 +130,7 @@ public class Brainfuck4J {
                         } else {
                             in--;
                         }
-                    } else if (instructions.get(i).type == InstructionTypes.START_LOOP) {
+                    } else if (instructions.get(i).type == InstructionType.START_LOOP) {
                         in++;
                     }
                 }
@@ -149,11 +149,11 @@ public class Brainfuck4J {
      * @throws Throwable If an error occurs during the execution of the code
      */
     public List<Instruction> run(final InputStream in, final PrintStream out, final AMemory memory, String input) throws Throwable {
-        final List<InstructionTypes> instructionTypes = new ArrayList<>();
+        final List<InstructionType> instructionTypes = new ArrayList<>();
 
         final char[] code = input.toCharArray();
         for (char c : code) {
-            final InstructionTypes type = InstructionTypes.fromLeadingCharacter(c);
+            final InstructionType type = InstructionType.fromLeadingCharacter(c);
             if (type == null) {
                 continue;
             }

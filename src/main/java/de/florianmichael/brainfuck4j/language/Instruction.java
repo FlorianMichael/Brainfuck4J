@@ -19,10 +19,10 @@ package de.florianmichael.brainfuck4j.language;
 
 public class Instruction {
 
-    public InstructionTypes type;
+    public InstructionType type;
     public int count = 1;
 
-    public Instruction(InstructionTypes type) {
+    public Instruction(InstructionType type) {
         this.type = type;
     }
 
