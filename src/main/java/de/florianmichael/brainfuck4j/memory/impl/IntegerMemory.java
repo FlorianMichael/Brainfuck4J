@@ -17,13 +17,13 @@
 
 package de.florianmichael.brainfuck4j.memory.impl;
 
-import de.florianmichael.brainfuck4j.language.InstructionType;
-import de.florianmichael.brainfuck4j.memory.AMemory;
+import de.florianmichael.brainfuck4j.instruction.InstructionType;
+import de.florianmichael.brainfuck4j.memory.AbstractMemory;
 
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
-public class IntegerMemory extends AMemory {
+public class IntegerMemory extends AbstractMemory {
 
     private final int[] memory;
 

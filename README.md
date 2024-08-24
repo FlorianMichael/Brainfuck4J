@@ -25,11 +25,11 @@ For accessing multiple dialects, the ``Dialect`` class file can be used to creat
 them:
 ```java
 // Will generate a troll script source file based on a brainfuck code
-final String ts = Dialect.convert(">++++++[<++++++>-]<.", Dialect.BRAINFUCK, Dialect.TROLLSCRIPT);
+final String ts = DialectType.BRAINFUCK.convert(">++++++[<++++++>-]<.", DialectType.TROLLSCRIPT);
 ```
 It's also possible to create a new Dialect by defining the specific operation mappings when creating a new object.
 ```java
-final Dialect bf = new Dialect("Brainfuck", ">", "<", "+", "-", "[", "]", ",", ".");
+final Dialect bf = new Dialect(">", "<", "+", "-", "[", "]", ",", ".");
 ```
 
 ### Execute a basic brainfuck code
@@ -50,8 +50,6 @@ test.run(
 ### Internals and code classes
 You can use the second constructor of ```Brainfuck4J``` to override the logger used to print all steps executed by the
 interpreter, a logger is an ```Logger``` instance.
-
-``BFRuntimeException`` will be used for brainfuck internal exceptions when interpreting the code.
 
 Note: run() doesn't throw any exceptions, they are printed through the logger which default uses ```.printStackTrace()```
 

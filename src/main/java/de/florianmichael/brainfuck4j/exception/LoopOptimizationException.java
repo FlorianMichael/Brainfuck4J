@@ -15,30 +15,18 @@
  * limitations under the License.
  */
 
-package de.florianmichael.brainfuck4j.memory;
+package de.florianmichael.brainfuck4j.exception;
 
-import de.florianmichael.brainfuck4j.memory.impl.ByteMemory;
-import de.florianmichael.brainfuck4j.memory.impl.IntegerMemory;
-import de.florianmichael.brainfuck4j.memory.impl.ShortMemory;
+import java.util.List;
 
-import java.util.function.Function;
+/**
+ * Thrown when {@link de.florianmichael.brainfuck4j.Brainfuck4J#calculateLoopPoints(List)} fails to optimize loop points,
+ * usually due to broken/invalid code input.
+ */
+public final class LoopOptimizationException extends RuntimeException {
 
-public enum MemoryTypes {
-
-    BYTE("Byte", ByteMemory::new),
-    SHORT("Short", ShortMemory::new),
-    INTEGER("Integer", IntegerMemory::new);
-
-    public final String name;
-    private final Function<Integer, AMemory> creator;
-
-    MemoryTypes(String name, Function<Integer, AMemory> creator) {
-        this.name = name;
-        this.creator = creator;
-    }
-
-    public AMemory create(final int size) {
-        return creator.apply(size);
+    public LoopOptimizationException() {
+        super("Invalid Loops. Please check your Brainfuck source code");
     }
 
 }

@@ -17,23 +17,31 @@
 
 package de.florianmichael.brainfuck4j.memory;
 
-import de.florianmichael.brainfuck4j.exception.BFRuntimeException;
-import de.florianmichael.brainfuck4j.language.Instruction;
-import de.florianmichael.brainfuck4j.language.InstructionType;
+import de.florianmichael.brainfuck4j.exception.MemoryException;
+import de.florianmichael.brainfuck4j.instruction.Instruction;
+import de.florianmichael.brainfuck4j.instruction.InstructionType;
 
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.List;
 
-public abstract class AMemory {
+/**
+ * The memory. Holds the execution of common instructions with {@link #execute(InputStreamReader, PrintStream, List, short[])}.
+ * <p>
+ * Instructions interacting with the memory array itself are handled in sub implementations via {@link #handleInstruction(InputStreamReader, PrintStream, InstructionType, int, int, short[])}
+ */
+public abstract class AbstractMemory {
 
     public final int size;
 
-    public AMemory(int size) {
+    /**
+     * @param size How many units this memory can hold before it overflows.
+     */
+    public AbstractMemory(int size) {
         this.size = size;
     }
 
-    public int currentPointer;
+    protected int currentPointer;
 
     public void execute(final InputStreamReader in, final PrintStream out, final List<Instruction> instructions, final short[] loopPoints) throws Throwable {
         for (int i = 0; i < instructions.size(); i++) {
@@ -43,18 +51,32 @@ public abstract class AMemory {
                 if (currentPointer < size - 1) {
                     currentPointer += instruction.count;
                 } else {
-                    throw new BFRuntimeException("Memory OVERFLOW when trying to increase memory pointer");
+                    handleMemoryOverflow();
                 }
             } else if (instruction.type == InstructionType.DECREASE_MEMORY_POINTER) {
                 if (currentPointer != 0) {
                     currentPointer -= instruction.count;
                 } else {
-                    throw new BFRuntimeException("Memory UNDERFLOW when trying to decrease memory pointer");
+                    handleMemoryUnderflow();
                 }
             } else {
                 i = handleInstruction(in, out, instruction.type, instruction.count, i, loopPoints);
             }
         }
+    }
+
+    // The following methods can be overridden to provide custom behavior for memory overflow and underflow.
+
+    protected void handleMemoryOverflow() {
+        throw new MemoryException(currentPointer, InstructionType.INCREASE_MEMORY_POINTER);
+    }
+
+    protected void handleMemoryUnderflow() {
+        throw new MemoryException(currentPointer, InstructionType.DECREASE_MEMORY_POINTER);
+    }
+
+    public int currentPointer() {
+        return currentPointer;
     }
 
     public abstract int handleInstruction(final InputStreamReader in, final PrintStream out, final InstructionType type, final int count, final int index, final short[] loopPoints) throws Throwable;

@@ -15,14 +15,18 @@
  * limitations under the License.
  */
 
-package de.florianmichael.brainfuck4j.language;
+package de.florianmichael.brainfuck4j.instruction;
 
+/**
+ * Holder class to track how often a given instruction with a {@link InstructionType} has to be executed, used for the
+ * batching optimization.
+ */
 public class Instruction {
 
-    public InstructionType type;
-    public int count = 1;
+    public final InstructionType type;
+    public /* private */ int count = 1;
 
-    public Instruction(InstructionType type) {
+    public Instruction(final InstructionType type) {
         this.type = type;
     }
 

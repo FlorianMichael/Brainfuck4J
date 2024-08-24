@@ -15,8 +15,12 @@
  * limitations under the License.
  */
 
-package de.florianmichael.brainfuck4j.language;
+package de.florianmichael.brainfuck4j.instruction;
 
+/**
+ * Registry of instruction types and their character used for text presentation of the language, custom instruction types
+ * which are only used for internal optimizations return true when {@link #custom()} called, their {@link #indicator} is null.
+ */
 public enum InstructionType {
 
     INCREASE_VALUE('+'),
@@ -27,6 +31,7 @@ public enum InstructionType {
     END_LOOP(']'),
     GET_CHAR('.'),
     PUT_CHAR(','),
+
     CLEAR_LOOP;
 
     public final Character indicator;
@@ -43,10 +48,11 @@ public enum InstructionType {
         return this.indicator == null;
     }
 
-    public static InstructionType fromLeadingCharacter(final char character) {
+    public static InstructionType byIndicator(final char indicator) {
         for (InstructionType value : values()) {
-            if (value.indicator == null) continue;
-            if (value.indicator == character) return value;
+            if (value.indicator == indicator) {
+                return value;
+            }
         }
         return null;
     }
