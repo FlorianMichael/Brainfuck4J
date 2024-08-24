@@ -68,7 +68,7 @@ public class Brainfuck4J {
      * @param memory The memory implementation to use.
      * @param input  The Brainfuck program code as a String.
      * @return A set of all instructions from the parsed input
-     * @throws Throwable, {@link LoopOptimizationException}, {@link MemoryException} If an error occurs during the execution of the code
+     * @throws Throwable {@link LoopOptimizationException}, {@link MemoryException} If an error occurs during the execution of the code
      */
     public List<Instruction> run(final InputStream in, final PrintStream out, final AbstractMemory memory, String input) throws Throwable {
         final List<InstructionType> initialInstructionTypes = new ArrayList<>();

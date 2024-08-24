@@ -64,13 +64,16 @@ All undocumented methods and classes are parts of the internals.
 - [x] Clear loops
 - [x] Pre-calculating loop points
 
-#### TODO List (http://calmerthanyouare.org/2015/01/07/optimizing-brainfuck.html): 
+## Planned for the future
+- [ ] Application as GUI
+- [ ] Executable jar file with command line
+- [ ] Unit testing
+
+#### Optimizations (http://calmerthanyouare.org/2015/01/07/optimizing-brainfuck.html): 
 - [ ] Scan loops
 - [ ] Operation offsets
 - [ ] Multiplication loops
 - [ ] Copy loops
-- [ ] GUI (ImGui?)
-- [ ] Executable jar file 
 
 ## Credits and sources
 This program / software was developed with the help of the following resources:
