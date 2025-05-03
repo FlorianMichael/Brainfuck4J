@@ -17,6 +17,8 @@
 
 package de.florianmichael.brainfuck4j.instruction;
 
+import java.util.Objects;
+
 /**
  * Registry of instruction types and their character used for text presentation of the language, custom instruction types
  * which are only used for internal optimizations return true when {@link #custom()} called, their {@link #indicator} is null.
@@ -44,13 +46,18 @@ public enum InstructionType {
         this.indicator = indicator;
     }
 
+    @Deprecated
     public boolean custom() {
-        return this.indicator == null;
+        return !inbuilt();
+    }
+
+    public boolean inbuilt() {
+        return this.indicator != null;
     }
 
     public static InstructionType byIndicator(final char indicator) {
         for (InstructionType value : values()) {
-            if (value.indicator == indicator) {
+            if (Objects.equals(value.indicator, indicator)) {
                 return value;
             }
         }
