@@ -42,6 +42,8 @@ import java.util.List;
  */
 public class Brainfuck4J {
 
+    public static final Brainfuck4J INSTANCE = new Brainfuck4J();
+
     private final Runnable runAfter;
 
     /**
@@ -157,10 +159,15 @@ public class Brainfuck4J {
         int in = 0;
 
         for (Instruction instruction : instructionTypes) {
-            if (instruction.type == InstructionType.START_LOOP) in++;
-            if (instruction.type == InstructionType.END_LOOP) in--;
+            if (instruction.type == InstructionType.START_LOOP) {
+                in++;
+            } else if (instruction.type == InstructionType.END_LOOP) {
+                in--;
+            }
 
-            if (in < 0) break;
+            if (in < 0) {
+                break;
+            }
         }
 
         if (in != 0) {
