@@ -42,7 +42,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-public class BrainfuckStudioApp extends JFrame {
+public final class BrainfuckStudioApp extends JFrame {
 
     private final RSyntaxTextArea editor = new RSyntaxTextArea();
     private final JTextArea outputArea = new JTextArea();
@@ -192,11 +192,11 @@ public class BrainfuckStudioApp extends JFrame {
             size = 30000;
         }
 
-        MemoryType finalMemory = memory;
-        int finalSize = size;
-        String finalProgram = normalizedProgram;
+        final MemoryType finalMemory = memory;
+        final int finalSize = size;
+        final String finalProgram = normalizedProgram;
 
-        TeeOutputStream teeOutput = new TeeOutputStream(liveOutput);
+        final TeeOutputStream teeOutput = new TeeOutputStream(liveOutput);
 
         currentWorker = new SwingWorker<>() {
             private List<Instruction> instructions;
@@ -204,8 +204,9 @@ public class BrainfuckStudioApp extends JFrame {
 
             @Override
             protected Void doInBackground() {
-                try (final ByteArrayInputStream in = new ByteArrayInputStream(stdin);
-                     final PrintStream out = new PrintStream(teeOutput, true, StandardCharsets.UTF_8)
+                try (
+                    final ByteArrayInputStream in = new ByteArrayInputStream(stdin);
+                    final PrintStream out = new PrintStream(teeOutput, true, StandardCharsets.UTF_8)
                 ) {
                     final AbstractMemory mem = finalMemory.create(finalSize);
 
