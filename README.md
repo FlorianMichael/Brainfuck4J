@@ -29,6 +29,8 @@ java -jar Brainfuck4J-<version>.jar            # GUI (Brainfuck Studio)
 java -jar Brainfuck4J-<version>.jar run ...    # CLI
 ```
 
+![GUI](/.github/media/gui.png)
+
 When using the Gradle project directly you can run:
 
 ```bash
@@ -38,21 +40,7 @@ When using the Gradle project directly you can run:
 
 #### CLI commands
 
-```text
-Brainfuck4J CLI
-
-Usage:
-  run <file> [--dialect <name>] [--memory <type>] [--size <n>]
-      Execute a Brainfuck program from file.
-
-  convert <input> <output> --from <dialect> --to <dialect>
-      Convert a program between dialects.
-
-  list dialects
-      List available dialects.
-  list memories
-      List available memory types.
-```
+![CLI](/.github/media/cli.png)
 
 Examples:
 
