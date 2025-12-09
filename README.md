@@ -61,30 +61,18 @@ java -jar Brainfuck4J-<version>.jar list memories
 
 ### Library
 
-#### Gradle/Maven
-To use Brainfuck4J with Gradle/Maven you can use [Maven Central](https://mvnrepository.com/artifact/de.florianmichael/Brainfuck4J) or [Lenni0451's Maven](https://maven.lenni0451.net/#/releases/de/florianmichael/Brainfuck4J).  
-You can also find instructions there on how to add it to your build script.
+### Gradle/Maven
 
-Gradle example (Kotlin DSL):
+To use Brainfuck4J with Gradle/Maven you can
+use [the Maven Central repository](https://mvnrepository.com/artifact/de.florianmichael/Brainfuck4J)
+or [my own repository](https://maven.florianmichael.de/#/releases/de/florianmichael/Brainfuck4J).  
+You can also find instructions how to implement it into your build script there.
 
-```kotlin
-dependencies {
-    implementation("de.florianmichael:Brainfuck4J:<version>")
-}
-```
+### Jar File
 
-Maven example:
-
-```xml
-<dependency>
-  <groupId>de.florianmichael</groupId>
-  <artifactId>Brainfuck4J</artifactId>
-  <version>YOUR_VERSION_HERE</version>
-</dependency>
-```
-
-#### Jar File
-If you just want the latest jar file you can download it from the GitHub [Actions](https://github.com/FlorianMichael/Brainfuck4J/actions) or use the [Releases](https://github.com/FlorianMichael/Brainfuck4J/releases).
+If you just want the latest jar file you can download it
+from [my build server](https://build.florianmichael.de/job/Brainfuck4J), [GitHub Actions](https://github.com/FlorianMichael/Brainfuck4J/actions)
+or use the [releases tab](https://github.com/FlorianMichael/Brainfuck4J/releases).
 
 ### Examples
 
